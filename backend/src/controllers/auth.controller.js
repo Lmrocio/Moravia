@@ -1,6 +1,6 @@
 import { User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
-import { hashPassword, setAuthCookie, verifyPassword } from '../utils/auth.js';
+import { clearAuthCookie, hashPassword, setAuthCookie, verifyPassword } from '../utils/auth.js';
 
 // Hash de relleno: si el correo no existe se compara igualmente contra él, para que
 // la respuesta tarde lo mismo y no se pueda averiguar qué correos están registrados.
@@ -35,4 +35,9 @@ export async function login(req, res) {
 
 export function me(req, res) {
   res.json({ user: req.user });
+}
+
+export function logout(req, res) {
+  clearAuthCookie(res);
+  res.status(204).end();
 }
