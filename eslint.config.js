@@ -6,7 +6,7 @@ export default [
   { ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**', 'oculto/**'] },
   js.configs.recommended,
   {
-    files: ['backend/**/*.js', '*.js'],
+    files: ['backend/**/*.js', 'frontend/vite.config.js', '*.js'],
     languageOptions: { globals: globals.node },
   },
   {
