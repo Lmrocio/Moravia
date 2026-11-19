@@ -79,6 +79,26 @@ describe('POST /api/auth/register', () => {
     expect(fields).toEqual(['email', 'name', 'password']);
   });
 
+  it('acepta una contraseña de exactamente 72 bytes', async () => {
+    await agent
+      .post('/api/auth/register')
+      .set('X-CSRF-Token', csrf)
+      .send({ ...carmen, password: 'a'.repeat(72) })
+      .expect(201);
+  });
+
+  it('rechaza contraseñas de más de 72 bytes aunque tengan menos de 72 caracteres', async () => {
+    // 37 "ñ" = 37 caracteres pero 74 bytes; 20 emojis = 20 caracteres pero 80 bytes
+    for (const password of ['ñ'.repeat(37), '🔒'.repeat(20)]) {
+      const res = await agent
+        .post('/api/auth/register')
+        .set('X-CSRF-Token', csrf)
+        .send({ ...carmen, password })
+        .expect(400);
+      expect(res.body.details[0]).toMatchObject({ field: 'password', message: expect.stringMatching(/72 bytes/) });
+    }
+  });
+
   it('ignora campos que no se permiten, como el rol', async () => {
     const res = await agent
       .post('/api/auth/register')
@@ -117,6 +137,27 @@ describe('POST /api/auth/login', () => {
       .send({ email: 'nadie@example.com', password: carmen.password })
       .expect(401);
     expect(wrongPassword.body.error).toBe(unknownEmail.body.error);
+  });
+
+  it('no acepta una contraseña de 72 bytes con texto añadido al final', async () => {
+    const password72 = 'a'.repeat(72);
+    const { session, token } = await newSession();
+    await session
+      .post('/api/auth/register')
+      .set('X-CSRF-Token', token)
+      .send({ ...carmen, email: 'larga@example.com', password: password72 })
+      .expect(201);
+
+    await agent
+      .post('/api/auth/login')
+      .set('X-CSRF-Token', csrf)
+      .send({ email: 'larga@example.com', password: `${password72}EXTRA` })
+      .expect(400);
+    await agent
+      .post('/api/auth/login')
+      .set('X-CSRF-Token', csrf)
+      .send({ email: 'larga@example.com', password: password72 })
+      .expect(200);
   });
 });
 
