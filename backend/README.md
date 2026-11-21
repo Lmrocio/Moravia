@@ -98,6 +98,19 @@ Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 
 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
 
+
+## Datos personales (RGPD)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/api/users/me/export` | Descarga un JSON (`moravia-mis-datos-AAAA-MM-DD.json`) con el perfil, la comunidad, la vivienda y las incidencias del usuario. `200`, `401`. |
+| `DELETE` | `/api/users/me` | Elimina la cuenta. Pide `{ "password": "…" }` y la cabecera `X-CSRF-Token`. `204`, `400`, `401`, `403`, `409`. |
+
+**Eliminar la cuenta** no borra el documento: lo **anonimiza** para que las incidencias y otros registros que lo referencian sigan siendo válidos. El nombre pasa a `Usuario eliminado`, el correo a `eliminado-<id>@moravia.invalid` (el original queda libre), la contraseña a un valor aleatorio desconocido, se desvincula de su comunidad y vivienda, y se marca `deletedAt`. Las sesiones abiertas dejan de funcionar al momento.
+
+El **presidente** no puede eliminar su cuenta (`409`) hasta que transfiera la presidencia, para que la comunidad no se quede sin gestor.
+
+
 ## Estructura
 
 ```
@@ -118,7 +131,7 @@ backend/
 
 ## Modelos
 
-- **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId` (null hasta unirse a una comunidad), `membershipStatus` (`none` | `pending` | `validated`).
+- **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId` (null hasta unirse a una comunidad), `membershipStatus` (`none` | `pending` | `validated`), `deletedAt` (fecha de eliminación de la cuenta o null).
 - **Community:** `name`, `address`, `presidentId`.
 - **Dwelling:** `communityId`, `floor` (0 = planta baja), `door`, `label` (`Bajo A`, `1º B`…). Índice único `(communityId, label)`.
 - **Invitation:** `communityId` (única por comunidad), `tokenHash` (SHA-256), `createdBy`, `expiresAt` (índice TTL).
