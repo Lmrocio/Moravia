@@ -16,19 +16,19 @@ Cada viernes decidiremos juntos quién hace qué y podremos cambiar el reparto s
 
 ## 2. Estimación y calendario
 
-**Propuesta actualizada el 19 de noviembre de 2026:** mantendremos los seis periodos y la entrega prevista para el 18 de diciembre. El presupuesto original es de 72 horas-persona, con 8 de reserva. Nos falta completar las horas dedicadas y la disponibilidad de cada uno; tenemos que acordar el alcance revisado y consultarlo con el profesorado.
+**Propuesta actualizada el 21 de noviembre de 2026:** mantenemos los seis periodos y la entrega prevista para el 18 de diciembre. El presupuesto original es de 72 horas-persona, con 8 de reserva. Nos falta completar las horas dedicadas y la disponibilidad de cada uno; tenemos que acordar el alcance revisado y consultarlo con el profesorado.
 
-Esta tabla recoge estimaciones para el trabajo restante desde el 19 de noviembre, no horas reales. Las áreas sirven de orientación: cada viernes decidiremos y podremos modificar el reparto. Hemos reservado tiempo para la revisión cruzada en P16. Prepararemos al menos dos comunidades ficticias, con viviendas, usuarios y recursos separados, para probar el aislamiento; no incluimos alta pública ni invitaciones en este recorrido. Antes de implementarlo acordaremos cómo vincular cuentas y viviendas sin permitir autoasignaciones de rol o comunidad. Consultaremos con el profesorado si este alcance reducido cumple los requisitos del proyecto.
+Esta tabla recoge estimaciones para el trabajo restante desde el 21 de noviembre, no horas reales. Las áreas sirven de orientación: cada viernes decidiremos y podremos modificar el reparto. Hemos reservado tiempo para la revisión cruzada en P16. Prepararemos al menos dos comunidades ficticias, con viviendas, usuarios y recursos separados, para probar el aislamiento. La API ya permite registrar cuentas; el recorrido estimado no incluye interfaz de alta ni invitaciones. Acordaremos si se incluyen y cómo vincular cuentas y viviendas sin permitir autoasignaciones de rol o comunidad. Consultaremos con el profesorado si este alcance reducido cumple los requisitos del proyecto.
 
 | ID | Trabajo y resultado esperado | Área orientativa | h-persona | Dependencias | Aceptación prevista | Sprint | Estado |
 |---|---|---|---:|---|---|---|---|
 | P1 | Revisar alcance, capacidad y backlog | Ambos | 3 | Ninguna | Decisiones y pendientes visibles | 2 | Propuesta |
-| P2 | Revisar ramas de backend y decidir integración | Ambos | 3 | P1 | PR #40 y #41 revisadas o bloqueos documentados | 2 | Propuesta |
+| P2 | Revisar e integrar las ramas de backend | Ambos | 0 | Ninguna | PR #40 y #41 integradas en `develop` | Hasta 21 nov. | Hecho; horas reales por registrar |
 | P3 | Preparar cliente React y navegación mínima | Frontend | 5 | P1, P20 | Cliente arranca y muestra vistas basadas en wireframes | 3 | Propuesta |
 | P4 | Completar entorno API y conexión de prueba | Backend | 4 | P2 | API arranca y conecta con datos ficticios | 3 | Propuesta |
 | P5 | Preparar datos y vínculos de prueba | Ambos | 3 | P2 | Dos comunidades ficticias con roles, viviendas y recursos separados, sin autoasignación | 3 | Propuesta |
-| P6 | Revisar modelo de usuario y credenciales | Backend | 3 | P4, P5 | Contraseña con hash; entradas inválidas rechazadas | 4 | Propuesta |
-| P7 | Implementar inicio/cierre de sesión seguro | Backend | 5 | P6 | Acceso válido y rechazo de credenciales inválidas | 4 | Propuesta |
+| P6 | Revisar el modelo de usuario y las credenciales para el recorrido | Backend | 3 | P4, P5 | Revisar la implementación existente y los ajustes necesarios para el recorrido | 4 | Revisión pendiente |
+| P7 | Implementar registro, inicio y cierre de sesión en la API | Backend | 0 | Ninguna | Endpoints y pruebas incluidos en la PR #41 | Hasta 21 nov. | Hecho; horas reales por registrar |
 | P8 | Comprobar rol y comunidad en servidor | Backend | 4 | P5, P7 | Accesos indebidos rechazados en pruebas | 4 | Propuesta |
 | P9 | Crear formulario de acceso e integrar sesión | Frontend | 4 | P3, P7 | Inicio y cierre funcionan en cliente | 4 | Propuesta |
 | P10 | Crear modelo y API de incidencias | Backend | 6 | P8 | Alta y consulta limitada por comunidad y rol | 5 | Propuesta |
@@ -42,21 +42,21 @@ Esta tabla recoge estimaciones para el trabajo restante desde el 19 de noviembre
 | P18 | Configurar CI/CD | Ambos | 4 | P3, P4 | Comprobaciones automáticas y despliegue automático verificables | 3 | Propuesta |
 | P19 | Preparar documentación académica y Wiki | Ambos | 8 | P1; horas y costes reales conforme avancemos | Documentos, Wiki e informe de horas revisados para la entrega | 2–6 | Propuesta |
 | P20 | Revisar navegación y wireframes | Frontend | 2 | Diseño inicial de Figma | Estructura revisada para las pantallas de P3 y P12 | 3 | Propuesta |
-| **Total previsto restante** | | | **88** | | | | |
+| **Total previsto restante** | | | **80** | | | | |
 
-Estimamos **88 horas-persona restantes**, incluidas 20 horas nuevas para despliegue, CI/CD, documentación académica y revisión del diseño. Con las 8 horas de reserva, serían **96**, frente a las 72 originales, sin contar el tiempo ya invertido. Las 8 horas de P19 y las 6 de P13 son primeras aproximaciones y pueden resultar insuficientes para toda la documentación y las pruebas. Para ajustarnos sin quitar unilateralmente requisitos académicos, propondremos al profesorado mantener el recorrido de incidencias, el despliegue y la documentación obligatoria, aplazar las funciones secundarias y acordar más tiempo o una reducción explícita de entregables. Revisaremos las PR #40 y #41 antes de descontar trabajo de backend; la rama de autenticación incluye los commits de la rama de modelos. El diseño de Figma ya iniciado tampoco tiene horas reales registradas aquí. No podemos confirmar la viabilidad hasta conocer nuestras horas y disponibilidad.
+Estimamos **80 horas-persona restantes**, incluidas 20 horas para despliegue, CI/CD, documentación académica y revisión del diseño. La estimación anterior era de 88 horas; retiramos 3 de P2 y 5 de P7 porque las PR #40 y #41 ya están integradas. Estas cifras no representan las horas reales invertidas, aún por registrar. Con las 8 horas de reserva serían **88**, frente a las 72 originales, sin contar el tiempo ya invertido. Las horas de P6 y del resto siguen pendientes de revisión; también habría que estimar cualquier interfaz o vinculación pública que se acuerde incluir. Las 8 horas de P19 y las 6 de P13 son primeras aproximaciones y pueden resultar insuficientes. Para ajustarnos sin quitar unilateralmente requisitos académicos, propondremos al profesorado mantener el recorrido de incidencias, el despliegue y la documentación obligatoria, aplazar las funciones secundarias y acordar más tiempo o una reducción explícita de entregables. El diseño de Figma ya iniciado tampoco tiene horas reales registradas aquí. No podemos confirmar la viabilidad hasta conocer nuestras horas y disponibilidad.
 
 | Sprint | Periodo | Objetivo candidato | Tareas | h estimadas* | Evidencia esperada |
 |---|---|---|---|---:|---|
 | 1 | 9–13 nov. | Base técnica original incumplida | Consultar [registro](seguimiento/sprint-01-2026-11-13.md) | No verificadas | Estado histórico |
-| 2 | 16–20 nov. | Revisar alcance y rama backend | P1–P2 | 6 | Propuesta y revisión de rama |
+| 2 | 16–20 nov. | Revisar alcance y rama backend | P1–P2 | 3 | Propuesta; integración de la PR #41 el 21 nov. |
 | 3 | 23–27 nov. | Preparar cliente, API, diseño, datos y CI/CD | P3–P5, P18, P20 | 18 | Arranque, datos y flujo automático reproducibles |
-| 4 | 30 nov.–4 dic. | Acceso y autorización básicos | P6–P9 | 16 | Casos de acceso y permisos |
+| 4 | 30 nov.–4 dic. | Integrar acceso y autorización básicos | P6, P8–P9 | 11 | Integración de sesión y casos de permisos |
 | 5 | 7–11 dic. | Completar recorrido de incidencias | P10–P12 | 16 | Alta, consulta y cambio de estado |
 | 6 | 14–18 dic. | Integrar, probar y publicar | P13–P15, P17 | 19 | Pruebas, URL pública e instrucciones |
 | 2–6 | Transversal | Revisar cambios y completar documentación académica | P16, P19 | 13 | Revisiones, documentos e informe de horas |
 
-*Estimaciones pendientes de confirmar; las 13 horas transversales no están repartidas por sprint. No incluimos avisos, registro público, QR, imágenes, chat ni votaciones. La demostración local es una alternativa ante problemas de despliegue, no sustituye el requisito público sin acordarlo con el profesorado. Conservamos los [seguimientos](seguimiento/README.md) para registrar resultados y horas reales.
+*Estimaciones pendientes de confirmar; las 13 horas transversales no están repartidas por sprint. No se estiman avisos, interfaz de registro público, vinculación pública, QR, imágenes, chat ni votaciones; el endpoint de registro ya existe. La demostración local es una alternativa ante problemas de despliegue, no sustituye el requisito público sin acordarlo con el profesorado. Conservamos los [seguimientos](seguimiento/README.md) para registrar resultados y horas reales.
 
 ### Ajustes pendientes en GitHub
 
@@ -70,7 +70,7 @@ Antes de actualizar el tablero, revisaremos juntos las issues existentes y su es
 
 ## 3. Stack y herramientas propuestas
 
-Las versiones son **referencias propuestas** para el proyecto; la rama de backend incluye sus propias dependencias, aún sin integrar en `develop`. Al iniciar el desarrollo se comprobará su compatibilidad, se fijarán versiones exactas en `package.json` y el archivo de bloqueo, y se actualizarán parches de seguridad. Node 24 es una [línea LTS](https://nodejs.org/en/about/previous-releases).
+Las versiones son **referencias propuestas** para el proyecto; el backend integrado en `develop` incluye sus propias dependencias y archivo de bloqueo. Se comprobará la compatibilidad de las herramientas restantes y se actualizarán parches de seguridad. Node 24 es una [línea LTS](https://nodejs.org/en/about/previous-releases).
 
 | Capa | Herramienta / versión de referencia | Uso y justificación |
 |---|---|---|

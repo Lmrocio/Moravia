@@ -34,7 +34,9 @@ El MVP original incluía registro, creación de comunidades y viviendas, invitac
 - Alta, listado y consulta de incidencias; cambio de estado por presidencia.
 - Validación de entradas, hash de contraseñas, protección de sesión, pruebas básicas y despliegue público previsto con datos ficticios.
 
-El tablón de avisos queda como opción secundaria sin horas incluidas. Proponemos posponer registro público, creación de comunidades desde la interfaz, invitaciones y QR, validación de residentes, fotos, mensajería, consultas, votaciones y notificaciones. Cada módulo añade interfaz, permisos, integración y pruebas; la incorporación pública requiere además un mecanismo seguro de vinculación. Debemos confirmar con el profesorado si el alcance reducido cumple el enunciado. Conservamos el diseño anterior como referencia en [viabilidad técnica](viabilidad-tecnica.md).
+La [PR #41](https://github.com/Lmrocio/VecinHub/pull/41) ya integró en la API un endpoint de registro público y autenticación. La propuesta de recorrido reducido utiliza cuentas y comunidades ficticias preparadas de antemano; no estima una interfaz de registro ni la vinculación pública de residentes a comunidades. Debemos acordar si esas partes se incluyen en el MVP y cómo se realizará la vinculación de forma segura; la propuesta no implica eliminar el endpoint existente.
+
+El tablón de avisos queda como opción secundaria sin horas incluidas. También proponemos posponer la creación de comunidades desde la interfaz, invitaciones y QR, validación de residentes, fotos, mensajería, consultas, votaciones y notificaciones. Cada módulo añade interfaz, permisos, integración y pruebas. Debemos confirmar con el profesorado si el alcance reducido cumple el enunciado. Conservamos el diseño anterior como referencia en [viabilidad técnica](viabilidad-tecnica.md).
 
 ## Fuera de alcance y ampliaciones
 

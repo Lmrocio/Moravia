@@ -23,7 +23,7 @@ Al principio planteamos acceso, comunidades y viviendas, invitaciones QR, incide
 
 ## Estado actual — 19 de noviembre de 2026
 
-En `develop` conservamos la documentación inicial; aún no contamos ahí con una aplicación ejecutable. Rocío comenzó la arquitectura de la información y los wireframes en Figma durante el Sprint 1, aunque no completamos el objetivo técnico de esa semana. Las ramas de backend contienen código, modelos y autenticación con pruebas propuestas en las [PR #40](https://github.com/Lmrocio/VecinHub/pull/40) y [#41](https://github.com/Lmrocio/VecinHub/pull/41), aún abiertas y pendientes de revisión e integración. Consulta la [planificación](docs/recursos.md#2-estimación-y-calendario) y el [seguimiento](docs/seguimiento/README.md).
+En `develop` ya están integrados el backend, los modelos y la autenticación de las [PR #40](https://github.com/Lmrocio/VecinHub/pull/40) y [#41](https://github.com/Lmrocio/VecinHub/pull/41). La API incluye registro, inicio y cierre de sesión; quedan por integrar la interfaz y el recorrido completo por comunidad. Rocío comenzó la arquitectura de la información y los wireframes en Figma durante el Sprint 1, aunque no completamos el objetivo técnico de esa semana. Consulta la [planificación](docs/recursos.md#2-estimación-y-calendario) y el [seguimiento](docs/seguimiento/README.md).
 
 Prevemos publicar la aplicación y preparar CI/CD para la entrega. Todavía no tenemos URL de producción ni capturas. Las instrucciones de instalación irán aquí cuando integremos una versión ejecutable.
 
