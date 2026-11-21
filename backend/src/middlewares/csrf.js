@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { AppError } from '../utils/AppError.js';
 import { cookieOptions } from '../utils/auth.js';
 
-export const CSRF_COOKIE = 'vecinhub_csrf';
+export const CSRF_COOKIE = 'moravia_csrf';
 export const CSRF_HEADER = 'x-csrf-token';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);

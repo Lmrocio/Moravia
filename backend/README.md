@@ -1,6 +1,6 @@
-# VecinHub — Backend
+# Moravía — Backend
 
-API REST de VecinHub con Node.js, Express 5 y MongoDB (Mongoose 8).
+API REST de Moravía con Node.js, Express 5 y MongoDB (Mongoose 8).
 
 ## Requisitos
 
@@ -55,7 +55,7 @@ La API queda en `http://localhost:4000`. `GET /api/health` devuelve `200` si la 
 
 ## Autenticación
 
-La sesión es un **JWT guardado en una cookie `HttpOnly`** (`vecinhub_token`): el JavaScript del navegador no puede leerla. Las peticiones que modifican datos (`POST`, `PUT`, `PATCH`, `DELETE`) requieren además un **token CSRF** en la cabecera `X-CSRF-Token`.
+La sesión es un **JWT guardado en una cookie `HttpOnly`** (`moravia_token`): el JavaScript del navegador no puede leerla. Las peticiones que modifican datos (`POST`, `PUT`, `PATCH`, `DELETE`) requieren además un **token CSRF** en la cabecera `X-CSRF-Token`.
 
 | Método | Ruta | Sesión | Descripción |
 |---|---|---|---|

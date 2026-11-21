@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 
-export const AUTH_COOKIE = 'vecinhub_token';
+export const AUTH_COOKIE = 'moravia_token';
 
 const SESSION_MS = env.JWT_EXPIRES_IN_HOURS * 60 * 60 * 1000;
 

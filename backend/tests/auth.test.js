@@ -50,7 +50,7 @@ describe('POST /api/auth/register', () => {
     });
     expect(res.body.user).not.toHaveProperty('passwordHash');
 
-    const cookie = getCookie(res, 'vecinhub_token');
+    const cookie = getCookie(res, 'moravia_token');
     expect(cookie).toMatch(/HttpOnly/);
     expect(cookie).toMatch(/SameSite=Lax/);
 
@@ -122,7 +122,7 @@ describe('POST /api/auth/login', () => {
       .send({ email: '  Carmen@Example.com ', password: carmen.password })
       .expect(200);
     expect(res.body.user.email).toBe(carmen.email);
-    expect(getCookie(res, 'vecinhub_token')).toMatch(/HttpOnly/);
+    expect(getCookie(res, 'moravia_token')).toMatch(/HttpOnly/);
   });
 
   it('da el mismo error si la contraseña es incorrecta o el correo no existe (401)', async () => {
@@ -167,7 +167,7 @@ describe('GET /api/auth/me y POST /api/auth/logout', () => {
   });
 
   it('devuelve 401 con un token manipulado', async () => {
-    await request(app).get('/api/auth/me').set('Cookie', 'vecinhub_token=token.falso.123').expect(401);
+    await request(app).get('/api/auth/me').set('Cookie', 'moravia_token=token.falso.123').expect(401);
   });
 
   it('devuelve el usuario conectado y, tras cerrar sesión, deja de hacerlo', async () => {

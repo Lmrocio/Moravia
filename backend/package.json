@@ -1,7 +1,7 @@
 {
-  "name": "vecinhub-backend",
+  "name": "moravia-backend",
   "version": "0.1.0",
-  "description": "API REST de VecinHub (Node.js + Express + MongoDB)",
+  "description": "API REST de Moravía (Node.js + Express + MongoDB)",
   "private": true,
   "type": "module",
   "main": "src/server.js",
