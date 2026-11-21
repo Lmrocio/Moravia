@@ -73,7 +73,7 @@ Comparación basada en información pública de los proveedores consultada el 6 
 
 Los grupos de mensajería también son una alternativa habitual: facilitan el intercambio inmediato, pero no proporcionan por sí solos un flujo de estados de incidencias ni un tablón separado de las conversaciones.
 
-Para el criterio 1a debemos completar la [comparación de al menos cinco competidores](analisis-competencia.md). Aquí conservamos las tres alternativas estudiadas en la propuesta inicial.
+Para el criterio 1a, la [PR #44](https://github.com/Lmrocio/VecinHub/pull/44) desarrolla una comparación de al menos cinco competidores. Aquí conservamos las tres alternativas estudiadas en la propuesta inicial.
 
 ## 5. Propuesta de valor
 

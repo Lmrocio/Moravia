@@ -4,7 +4,7 @@ Hemos revisado el enunciado de la propuesta y el del proyecto. Las referencias 2
 
 | Criterio o entrega | Estado | Qué tenemos y qué falta |
 |---|---|---|
-| 1a · Competencia | En curso | Tres alternativas iniciales; completar el [análisis](analisis-competencia.md) con al menos cinco empresas y fuentes. |
+| 1a · Competencia | En curso | Tres alternativas iniciales; el análisis de al menos cinco empresas con fuentes se desarrolla en la [PR #44](https://github.com/Lmrocio/VecinHub/pull/44). |
 | 1b · Organización | Pendiente | Crear `docs/estructura-organizativa.md`, con organigrama y funciones. |
 | 2c · Sprints y Wiki | En curso | [Seis sprints](recursos.md#2-estimación-y-calendario) planificados; confirmar iteraciones en Project y publicar la planificación en Wiki. |
 | 2f · Presupuesto | En curso | Hay estimaciones; faltan `docs/presupuesto.md`, horas reales, costes por perfil y comparación. |
