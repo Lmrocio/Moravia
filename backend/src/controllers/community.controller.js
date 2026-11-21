@@ -1,9 +1,14 @@
 import mongoose from 'mongoose';
+import { env } from '../config/env.js';
 import { Community } from '../models/Community.js';
 import { Dwelling } from '../models/Dwelling.js';
+import { Invitation } from '../models/Invitation.js';
 import { MEMBERSHIP_STATUS, ROLES, User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
 import { buildDwellings } from '../utils/dwellings.js';
+import { generateToken, hashToken } from '../utils/tokens.js';
+
+const INVITATION_TTL_MS = 48 * 60 * 60 * 1000; // 48 horas
 
 // POST /api/communities
 // Crea la comunidad y sus viviendas, y convierte al usuario en presidente.
@@ -51,4 +56,43 @@ export async function createCommunity(req, res) {
   }
 
   res.status(201).json({ community, dwellings, user });
+}
+
+// POST /api/communities/:id/invitation
+// Genera un token de invitación de 48 h. Solo puede hacerlo el presidente de esa
+// comunidad. Una invitación nueva sustituye a la anterior, que deja de funcionar.
+export async function createInvitation(req, res) {
+  const { id } = req.params;
+  if (!mongoose.isValidObjectId(id)) {
+    throw new AppError(404, 'Comunidad no encontrada');
+  }
+
+  const community = await Community.findById(id);
+  if (!community) {
+    throw new AppError(404, 'Comunidad no encontrada');
+  }
+
+  const isPresident =
+    req.user.role === ROLES.PRESIDENT && community.presidentId.equals(req.user._id);
+  if (!isPresident) {
+    throw new AppError(403, 'Solo el presidente de la comunidad puede generar invitaciones');
+  }
+
+  const token = generateToken();
+  const expiresAt = new Date(Date.now() + INVITATION_TTL_MS);
+
+  await Invitation.findOneAndUpdate(
+    { communityId: community._id },
+    { tokenHash: hashToken(token), expiresAt, createdBy: req.user._id },
+    { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true },
+  );
+
+  // El token en claro solo se devuelve aquí, una vez. El frontend dibuja el QR con joinUrl.
+  res.status(201).json({
+    invitation: {
+      token,
+      expiresAt,
+      joinUrl: `${env.CLIENT_ORIGIN}/unirse?token=${token}`,
+    },
+  });
 }
