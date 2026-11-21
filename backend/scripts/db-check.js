@@ -5,7 +5,7 @@ import { connectDB, disconnectDB } from '../src/config/db.js';
 import { User, ROLES, MEMBERSHIP_STATUS } from '../src/models/User.js';
 import { Community } from '../src/models/Community.js';
 
-const email = `db-check-${Date.now()}@vecinhub.test`;
+const email = `db-check-${Date.now()}@moravia.test`;
 
 try {
   await connectDB(env.MONGODB_URI);
