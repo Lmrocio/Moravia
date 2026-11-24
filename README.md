@@ -10,6 +10,7 @@
 - [Documentación de la propuesta](#documentación-de-la-propuesta)
 - [Equipo y planificación](#equipo-y-planificación)
 - [Consulta del repositorio](#consulta-del-repositorio)
+- [Despliegue](#despliegue)
 
 ## Descripción
 
@@ -76,4 +77,10 @@ Para trabajar con el frontend usamos `npm run dev --prefix frontend`; para compr
 
 Los documentos pueden abrirse directamente desde la tabla anterior en GitHub. Para consultarlos en local, clona el repositorio con su URL desde el botón **Code** de GitHub y abre la carpeta en un editor compatible con Markdown, como VS Code.
 
-La carpeta `docs/` contiene la propuesta. El repositorio se encuentra en fase de planificación y todavía no incluye una aplicación ejecutable; el calendario de desarrollo y el flujo de trabajo previsto están descritos en [recursos y organización](docs/recursos.md).
+La carpeta `docs/` contiene la propuesta, el calendario de desarrollo y el flujo de trabajo previstos.
+
+## Despliegue
+
+Está previsto desplegar el frontend en Vercel y la API en Render. La configuración de Render está en `render.yaml` y la de Vercel en `frontend/vercel.json`. Consulta [la guía de despliegue](docs/despliegue.md) para conectar GitHub, configurar las variables en los paneles y comprobar el servicio.
+
+Las URLs de producción se incorporarán aquí después de crear y verificar ambos servicios. La rama de producción será `main` cuando se integre la versión revisada desde `develop`.
