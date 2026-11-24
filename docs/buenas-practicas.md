@@ -15,7 +15,7 @@ Cada tarea seguirá estos pasos:
 3. Iniciamos el temporizador de Toggl Track con el número y el nombre de la tarea, por ejemplo `#7 Análisis de competencia`.
 4. Trabajamos en la tarea y guardamos avances mediante commits con mensajes claros.
 5. Al hacer una pausa o terminar, detenemos el temporizador y anotamos en la issue lo realizado, los bloqueos y el siguiente paso cuando sea necesario.
-6. Subimos la rama y abrimos una pull request hacia `develop`, solicitando la revisión de la otra persona. Cuando se revise, se compruebe y se integre, actualizamos la issue y su estado en el tablero.
+6. Subimos la rama, abrimos la PR y pasamos la issue a `In Review` cuando está lista para que la revise la otra persona. Al integrar los cambios, actualizamos la issue y la movemos a `Done` si está completa.
 
 ## 2. Organización de tareas e incidencias
 
@@ -45,7 +45,7 @@ La persona que revisa leerá los cambios, comprobará que se entiende lo realiza
 
 ## 5. Comunicación y bloqueos
 
-Cada día que trabajemos en el proyecto nos enviaremos un mensaje por WhatsApp con lo que hemos hecho, lo que vamos a hacer y los bloqueos que tengamos. Dejaremos las decisiones que afecten a una tarea en su issue para que queden registradas.
+Usamos WhatsApp para contarnos cómo vamos, qué haremos después y si necesitamos ayuda. Dejamos las decisiones de cada tarea en su issue y actualizamos el tablero durante el sprint.
 
 Si llevamos unos 45 minutos bloqueados sin encontrar una salida, avisaremos por WhatsApp y, cuando sea posible, nos conectaremos por Discord para revisar el problema juntos compartiendo pantalla. Si no podemos resolverlo en ese momento, anotaremos el bloqueo y el siguiente paso en la issue.
 

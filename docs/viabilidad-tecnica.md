@@ -75,7 +75,7 @@ erDiagram
 
 Los documentos agrupan datos que se consultan juntos, como mensajes acotados de una incidencia; las entidades compartidas se referencian para evitar duplicación. El voto y la participación se insertan con `session.withTransaction` en una transacción MongoDB: si falla una operación, se revierten ambas; el índice único resuelve solicitudes simultáneas. Se comprueban pertenencia, vivienda validada, estado y plazo dentro del flujo de votación. Se prueban concurrencia y reversión con un despliegue compatible con transacciones.
 
-**Límite de privacidad:** separar colecciones evita un vínculo directo, pero no garantiza anonimato frente a administradores, registros, marcas temporales o correlación de operaciones; en grupos pequeños también puede deducirse una respuesta del recuento. No registrar contenido ni marcas temporales innecesarias, mostrar resultados solo al cierre y comunicar esta limitación. No afirmar anonimato absoluto. Para garantías más fuertes se necesitaría un diseño y auditoría específicos fuera de este MVP.
+**Límite de privacidad:** separamos el registro de participación de la respuesta para evitar un vínculo directo. Aun así, en grupos pequeños se puede deducir alguna respuesta por el recuento, y los registros o las horas de las operaciones también pueden dar pistas. Guardaremos solo los datos necesarios y mostraremos los resultados al cierre.
 
 ### Justificación del modelo NoSQL frente a relacional (SQL)
 

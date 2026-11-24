@@ -10,7 +10,7 @@
 
 ## 1. Equipo y responsabilidades
 
-El equipo está formado por Rocío Luque Montes y Pablo Sanz Aznar. Ambos revisarán el trabajo de la otra persona y participarán en pruebas y documentación.
+Somos Rocío Luque Montes y Pablo Sanz Aznar. Nos repartimos las tareas y revisamos el trabajo de la otra persona. Los dos participamos en las pruebas y en la documentación.
 
 | Integrante | Responsabilidad principal | Apoyo compartido |
 |---|---|---|
@@ -72,7 +72,7 @@ Se utilizarán datos ficticios en pruebas y demostraciones, sin subir secretos a
 
 ## 5. Gestión y configuración prevista
 
-- **Git y GitHub:** repositorio público para la entrega; `main` contiene la versión de producción, `develop` integra trabajo y cada tarea sale de `feature/nombre`. Las ramas se integran mediante pull request revisada por otro miembro y pruebas satisfactorias. Mantener `.gitignore` y añadir un ejemplo de variables sin secretos antes de programar. Crear `client/` y `server/` al iniciar la implementación.
-- **GitHub Projects:** crear manualmente más adelante un tablero con columnas `Backlog`, `Todo`, `In Progress` y `Done`; una incidencia por tarea con responsable, prioridad numérica (1 máxima a 3 baja), horas estimadas y criterio de aceptación. Revisar bloqueos y avance semanalmente. El tablero y la protección de ramas son configuraciones pendientes, no realizadas.
-- **Comunicación:** canal de grupo propuesto en Discord o Telegram y reunión semanal breve; registrar decisiones, responsables y fecha en una incidencia del proyecto. El equipo elegirá el canal definitivo.
-- **Pruebas:** ejecutar comprobaciones automáticas en cada pull request cuando el proyecto esté configurado; cubrir permisos, acceso entre comunidades, vencimiento de invitaciones y voto concurrente. Antes de la entrega, recorrer las funciones en móvil y registrar resultados y defectos.
+- **Git y GitHub:** organizamos el código en `frontend/` y `backend/`. Integramos las ramas de trabajo en `develop` mediante PR revisadas. Reservamos `main` para las versiones estables. Dejamos los ejemplos de configuración en el repositorio y guardamos las credenciales fuera de Git.
+- **GitHub Projects:** usamos `Backlog`, `Todo`, `In Progress`, `In Review` y `Done`. Actualizamos el estado y las prioridades durante el sprint. Pasamos una tarea a `In Review` cuando la PR está lista para que la revise la otra persona.
+- **Comunicación:** hablamos por WhatsApp y reservamos los viernes para repasar el sprint. Anotamos en cada issue las decisiones que afectan a esa tarea.
+- **Pruebas:** comprobamos los cambios al preparar cada PR. Antes de la entrega probaremos los recorridos principales en móvil y anotaremos qué funciona y qué queda por corregir.

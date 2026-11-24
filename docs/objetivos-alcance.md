@@ -10,11 +10,11 @@
 
 ## Objetivo general
 
-Desarrollar un prototipo web que facilite la comunicación y el seguimiento de asuntos cotidianos de una comunidad de vecinos pequeña o mediana.
+Queremos desarrollar una web que facilite la comunicación y el seguimiento de incidencias en comunidades de vecinos pequeñas y medianas.
 
 ## Objetivos específicos SMART
 
-Se planifican seis sprints semanales desde el 9 de noviembre hasta la revisión final del **18 de diciembre de 2026**, con 72 horas-persona comprometidas. Los porcentajes siguientes son metas de aceptación del prototipo, no resultados conseguidos.
+Hemos previsto seis sprints semanales desde el 9 de noviembre hasta la revisión final del **18 de diciembre de 2026**, con 72 horas-persona. Usaremos las metas de la tabla para comprobar cómo funciona el prototipo.
 
 | Objetivo | Plazo previsto | Medición y meta |
 |---|---|---|
@@ -23,7 +23,7 @@ Se planifican seis sprints semanales desde el 9 de noviembre hasta la revisión 
 | 3. Conseguir que las consultas admitan como máximo una respuesta por vivienda y rechacen los intentos duplicados. | 11 de diciembre de 2026 | Completar el recorrido de publicación a cierre; rechazar todos los intentos duplicados y accesos entre comunidades en las pruebas definidas. |
 | 4. Alcanzar una tasa de éxito superior al 80 % en las tareas de uso y desplegar el prototipo en Vercel y Render. | 18 de diciembre de 2026 | Desplegar en Vercel y Render y observar a al menos 4 personas del perfil objetivo realizando alta, incidencia y lectura de aviso. Registrar tareas, tiempos y dificultades; meta superior al 80 % de tareas completadas sin asistencia, calculada sobre el total de intentos. |
 
-Las pruebas de usuarios están planificadas y requieren reclutar participantes; si no es posible, se registrará la limitación en lugar de atribuir resultados. Los criterios se comprobarán mediante una lista de casos, resultados y defectos, y una sesión de demostración con datos ficticios.
+Buscaremos participantes para las pruebas de uso. Anotaremos qué pruebas hacemos, qué resultados obtenemos y qué queda por corregir. En la demostración usaremos datos ficticios.
 
 ## MVP: qué se incluye
 
