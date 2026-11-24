@@ -8,6 +8,7 @@ vi.mock('qrcode.react', () => ({
 
 afterEach(() => {
   cleanup();
+  window.history.replaceState({}, '', '/');
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -36,6 +37,7 @@ it('crea una comunidad, muestra el QR y permite copiar, descargar y revocar', as
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
   vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,abc');
   const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
   render(<App />);
   fireEvent.change(await screen.findByLabelText('Nombre de la finca'), {
@@ -50,6 +52,12 @@ it('crea una comunidad, muestra el QR y permite copiar, descargar y revocar', as
 
   const qr = await screen.findByLabelText('Código QR de invitación');
   expect(qr.dataset.value).toBe(joinUrl);
+  confirm.mockReturnValueOnce(false);
+  fireEvent.click(screen.getByRole('button', { name: /Generar una nueva/ }));
+  expect(screen.getByLabelText('Código QR de invitación').dataset.value).toBe(joinUrl);
+  expect(
+    requests.filter((request) => request.url.endsWith('/invitation') && request.method === 'POST'),
+  ).toHaveLength(1);
   fireEvent.click(screen.getByRole('button', { name: /Copiar enlace/ }));
   await waitFor(() => expect(writeText).toHaveBeenCalledWith(joinUrl));
   expect((await screen.findByRole('status')).textContent).toContain('Enlace copiado');
@@ -58,4 +66,25 @@ it('crea una comunidad, muestra el QR y permite copiar, descargar y revocar', as
   fireEvent.click(screen.getByRole('button', { name: /Revocar invitación/ }));
   await waitFor(() => expect(screen.queryByLabelText('Código QR de invitación')).toBeNull());
   expect(requests.some((request) => request.method === 'DELETE')).toBe(true);
+});
+
+it('muestra el rechazo del servidor al abrir una invitación caducada o revocada', async () => {
+  window.history.replaceState({}, '', '/unirse?token=abcdefghijk');
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url) => {
+      if (url.endsWith('/api/auth/csrf'))
+        return { ok: true, status: 200, json: async () => ({ csrfToken: 'csrf' }) };
+      return {
+        ok: false,
+        status: 404,
+        json: async () => ({ error: 'La invitación no es válida o ha caducado' }),
+      };
+    }),
+  );
+  render(<App />);
+  expect(
+    await screen.findByRole('heading', { name: 'Esta invitación no está disponible' }),
+  ).toBeTruthy();
+  expect(screen.getByText(/Puede haber caducado o haber sido revocada/)).toBeTruthy();
 });

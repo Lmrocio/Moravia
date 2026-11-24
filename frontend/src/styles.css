@@ -13,6 +13,14 @@ body {
   margin: 0;
   min-width: 320px;
 }
+.demo-banner {
+  background: #eaf0db;
+  color: #405a37;
+  text-align: center;
+  padding: 12px 20px;
+  font-size: 13px;
+  line-height: 1.5;
+}
 button,
 input {
   font: inherit;

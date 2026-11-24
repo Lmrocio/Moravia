@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { demoApi } from './demo.js';
 import './styles.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const DEMO = import.meta.env.DEV && new URLSearchParams(window.location.search).get('demo') === '1';
 let csrfPromise;
 
 function csrfToken() {
@@ -22,6 +24,7 @@ function csrfToken() {
 }
 
 async function api(path, { method = 'GET', body, csrfRetry = true } = {}) {
+  if (DEMO) return demoApi(path, { method, body });
   const headers = {};
   if (method !== 'GET') {
     headers['X-CSRF-Token'] = await csrfToken();
@@ -287,6 +290,19 @@ function Invitations({ communityId }) {
   }, [invitation]);
 
   async function updateInvitation(method) {
+    if (
+      method === 'POST' &&
+      invitation &&
+      !window.confirm(
+        'Crear una nueva invitación invalidará el enlace anterior. ¿Quieres continuar?',
+      )
+    )
+      return;
+    if (
+      method === 'DELETE' &&
+      !window.confirm('El enlace de invitación dejará de funcionar. ¿Quieres revocarlo?')
+    )
+      return;
     setLoading(true);
     setError('');
     setMessage('');
@@ -441,7 +457,11 @@ function Join() {
     api('/api/invitations/validate', { method: 'POST', body: { token } })
       .then(() => setState({ loading: false, valid: true }))
       .catch((err) =>
-        setState({ loading: false, valid: false, unavailable: !err.status || err.status >= 500 }),
+        setState({
+          loading: false,
+          valid: false,
+          unavailable: !err.status || err.status === 403 || err.status >= 500,
+        }),
       );
   }, []);
   return (
@@ -493,7 +513,8 @@ export default function App() {
   async function logout() {
     try {
       await api('/api/auth/logout', { method: 'POST' });
-      setUser(null);
+      if (DEMO) setUser((await api('/api/auth/me')).user);
+      else setUser(null);
       setError('');
     } catch (err) {
       setError(err.message);
@@ -515,6 +536,12 @@ export default function App() {
           </div>
         )}
       </header>
+      {DEMO && (
+        <div className="demo-banner" role="status">
+          <strong>Modo demostración</strong> · Datos ficticios, sin conexión al servidor. El QR es
+          de prueba y no crea invitaciones reales.
+        </div>
+      )}
       <main className="container">
         {loading ? (
           <p className="muted">Cargando…</p>
