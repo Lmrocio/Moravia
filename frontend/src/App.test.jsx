@@ -27,6 +27,7 @@ it('crea una comunidad, muestra el QR y permite copiar, descargar y revocar', as
       if (url.endsWith('/api/auth/me')) body = { user: resident };
       else if (url.endsWith('/api/auth/csrf')) body = { csrfToken: 'csrf' };
       else if (url.endsWith('/api/communities')) body = { user: president };
+      else if (url.endsWith('/membership-requests')) body = { requests: [] };
       else if (options.method === 'DELETE') status = 204;
       else
         body = { invitation: { joinUrl, expiresAt: new Date(Date.now() + 60000).toISOString() } };
@@ -87,4 +88,54 @@ it('muestra el rechazo del servidor al abrir una invitación caducada o revocada
     await screen.findByRole('heading', { name: 'Esta invitación no está disponible' }),
   ).toBeTruthy();
   expect(screen.getByText(/Puede haber caducado o haber sido revocada/)).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Enviar solicitud' })).toBeNull();
+});
+
+it('solicita una vivienda desde el enlace y muestra el estado pendiente', async () => {
+  window.history.replaceState({}, '', '/unirse?token=token-de-prueba');
+  const requests = vi.fn(async (url) => {
+    const data = url.endsWith('/validate')
+      ? { community: { name: 'Los Olivos' }, dwellings: [{ id: 'dwelling', label: '2º B' }] }
+      : url.endsWith('/register')
+        ? { user: { name: 'Eva', role: 'resident', communityId: 'c', membershipStatus: 'pending' } }
+        : { csrfToken: 'csrf' };
+    return { ok: true, status: 200, json: async () => data };
+  });
+  vi.stubGlobal('fetch', requests);
+  render(<App />);
+  fireEvent.change(await screen.findByLabelText('Nombre completo'), { target: { value: 'Eva' } });
+  fireEvent.change(screen.getByLabelText('Correo electrónico'), {
+    target: { value: 'eva@example.com' },
+  });
+  fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'clave-segura' } });
+  fireEvent.change(screen.getByLabelText('Vivienda'), { target: { value: 'dwelling' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }));
+  expect(await screen.findByRole('heading', { name: 'Pendiente de validación' })).toBeTruthy();
+  const [, options] = requests.mock.calls.find(([url]) => url.endsWith('/register'));
+  expect(JSON.parse(options.body)).toMatchObject({
+    token: 'token-de-prueba',
+    dwellingId: 'dwelling',
+  });
+  expect(window.location.pathname).toBe('/');
+});
+
+it('permite al presidente denegar una solicitud y la retira del listado', async () => {
+  const requests = vi.fn(async (url) => {
+    if (url.endsWith('/vecino')) return { ok: true, status: 204 };
+    const data = url.endsWith('/membership-requests')
+      ? { requests: [{ id: 'vecino', name: 'Eva', dwelling: '2º B' }] }
+      : url.endsWith('/me')
+        ? { user: { name: 'Pablo', role: 'president', communityId: 'c' } }
+        : { csrfToken: 'csrf' };
+    return { ok: true, status: 200, json: async () => data };
+  });
+  vi.stubGlobal('fetch', requests);
+  render(<App />);
+  expect(await screen.findByText('Eva · 2º B')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Denegar a Eva' }));
+  expect(await screen.findByText('Solicitud denegada.')).toBeTruthy();
+  expect(screen.queryByText('Eva · 2º B')).toBeNull();
+  const [, options] = requests.mock.calls.find(([url]) => url.endsWith('/vecino'));
+  expect(options.method).toBe('PATCH');
+  expect(JSON.parse(options.body)).toEqual({ decision: 'reject' });
 });

@@ -20,6 +20,7 @@ const invitationSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    registrationCount: { type: Number, default: 0 },
     // Índice TTL: MongoDB borra el documento cuando llega esta fecha. El borrado se
     // ejecuta cada minuto aproximadamente, así que al usar la invitación también hay
     // que comprobar que expiresAt no ha pasado.

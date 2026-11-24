@@ -1,4 +1,9 @@
 import { Router } from 'express';
+import { z } from 'zod';
+import {
+  listMembershipRequests,
+  decideMembershipRequest,
+} from '../controllers/membership.controller.js';
 import {
   createCommunity,
   createInvitation,
@@ -13,5 +18,12 @@ const router = Router();
 router.post('/', requireAuth, validateBody(createCommunitySchema), createCommunity);
 router.post('/:id/invitation', requireAuth, createInvitation);
 router.delete('/:id/invitation', requireAuth, revokeInvitation);
+router.get('/:id/membership-requests', requireAuth, listMembershipRequests);
+router.patch(
+  '/:id/membership-requests/:userId',
+  requireAuth,
+  validateBody(z.object({ decision: z.enum(['approve', 'reject']) })),
+  decideMembershipRequest,
+);
 
 export default router;

@@ -82,7 +82,10 @@ Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
 | `POST` | `/api/communities` | Usuario sin comunidad | Crea la comunidad y sus viviendas; el creador pasa a ser presidente. `201`, `400`, `401`, `409`. |
 | `POST` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Genera un token de invitación válido 48 h. `201`, `401`, `403`, `404`. |
 | `DELETE` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Revoca la invitación vigente. `204`, `401`, `403`, `404`. |
-| `POST` | `/api/invitations/validate` | Público | Comprueba un token mediante `{ "token": "..." }`. `200`, `400`, `404`. Requiere CSRF. |
+| `POST` | `/api/invitations/validate` | Público | Comprueba el token y devuelve el nombre de la finca y sus viviendas disponibles. Requiere CSRF. |
+| `POST` | `/api/invitations/register` | Público | Recibe `token`, `dwellingId`, `name`, `email` y `password`. Crea una cuenta pendiente e inicia sesión. Requiere CSRF. |
+| `GET` | `/api/communities/:id/membership-requests` | Presidente de esa comunidad | Lista las solicitudes pendientes. |
+| `PATCH` | `/api/communities/:id/membership-requests/:userId` | Presidente de esa comunidad | Resuelve la solicitud mediante `{ "decision": "approve" }` o `{ "decision": "reject" }`. Requiere CSRF. |
 
 **Crear una comunidad.** El servidor genera las viviendas a partir de la estructura del edificio:
 
@@ -100,7 +103,7 @@ Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 
 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
 
-La validación comprueba `expiresAt` además de buscar el hash: la eliminación por TTL puede retrasarse. El endpoint de validación solo comprueba el token; el alta de vecinos deberá comprobarlo de nuevo al utilizarlo e implementarse por separado.
+Tanto la validación inicial como el registro comprueban el hash y `expiresAt`, ya que el borrado por TTL puede retrasarse. La vivienda se reserva desde que se presenta la solicitud. Aprobar confirma la vinculación y denegar libera la vivienda y conserva la cuenta con estado `rejected`.
 
 ## Estructura
 
@@ -122,7 +125,7 @@ backend/
 
 ## Modelos
 
-- **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId` (null hasta unirse a una comunidad), `membershipStatus` (`none` | `pending` | `validated`).
+- **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId`, `membershipStatus` (`none` | `pending` | `validated` | `rejected`). Cada vivienda puede estar vinculada a una sola cuenta.
 - **Community:** `name`, `address`, `presidentId`.
 - **Dwelling:** `communityId`, `floor` (0 = planta baja), `door`, `label` (`Bajo A`, `1º B`…). Índice único `(communityId, label)`.
 - **Invitation:** `communityId` (única por comunidad), `tokenHash` (SHA-256), `createdBy`, `expiresAt` (índice TTL).

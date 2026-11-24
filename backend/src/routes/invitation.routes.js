@@ -1,21 +1,22 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { Invitation } from '../models/Invitation.js';
-import { AppError } from '../utils/AppError.js';
-import { hashToken } from '../utils/tokens.js';
+import { registerResident, validateInvitation } from '../controllers/membership.controller.js';
 import { validateBody } from '../middlewares/validate.js';
+import { registerSchema } from '../validators/auth.schemas.js';
 
 const router = Router();
 const schema = z.object({ token: z.string().regex(/^[A-Za-z0-9_-]{43}$/) });
 
-// El TTL no garantiza el borrado inmediato: hay que comprobar la fecha en la consulta.
-router.post('/validate', validateBody(schema), async (req, res) => {
-  const invitation = await Invitation.findOne({
-    tokenHash: hashToken(req.body.token),
-    expiresAt: { $gt: new Date() },
-  }).select('expiresAt');
-  if (!invitation) throw new AppError(404, 'La invitación no es válida o ha caducado');
-  res.set('Cache-Control', 'no-store').json({ valid: true, expiresAt: invitation.expiresAt });
-});
+router.post('/validate', validateBody(schema), validateInvitation);
+router.post(
+  '/register',
+  validateBody(
+    registerSchema.extend({
+      ...schema.shape,
+      dwellingId: z.string().regex(/^[a-f0-9]{24}$/i, 'Selecciona una vivienda válida'),
+    }),
+  ),
+  registerResident,
+);
 
 export default router;

@@ -1,6 +1,8 @@
 # Moravía — Frontend
 
-El panel permite iniciar sesión o registrar una cuenta, crear una comunidad y generar, copiar, descargar o revocar una invitación. El QR contiene la URL que devuelve el backend. El enlace comprueba el token, pero la incorporación efectiva del vecino aún está pendiente.
+El presidente puede crear una comunidad, generar o revocar un QR y gestionar las solicitudes de vinculación. Al abrir el enlace del QR, el vecino selecciona una vivienda disponible y crea su cuenta. El panel muestra el estado de la solicitud al volver a abrirlo o recargarlo.
+
+Para probar ambos roles, crea una finca y genera una invitación en un navegador. Abre el enlace en una ventana privada para registrar al vecino sin cambiar la sesión del presidente. Actualiza las solicitudes desde el panel de presidencia y aprueba o deniega el alta. Recarga el panel del vecino para comprobar el resultado.
 
 En desarrollo, ejecuta el backend en el puerto 4000 y después:
 

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { demoApi } from './demo.js';
+import { Join, MembershipRequests } from './Membership.jsx';
 import './styles.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
@@ -446,53 +447,8 @@ function Invitations({ communityId }) {
   );
 }
 
-function Join() {
-  const [state, setState] = useState({ loading: true, valid: false });
-  useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('token');
-    if (!token) {
-      setState({ loading: false, valid: false });
-      return;
-    }
-    api('/api/invitations/validate', { method: 'POST', body: { token } })
-      .then(() => setState({ loading: false, valid: true }))
-      .catch((err) =>
-        setState({
-          loading: false,
-          valid: false,
-          unavailable: !err.status || err.status === 403 || err.status >= 500,
-        }),
-      );
-  }, []);
-  return (
-    <section className="card auth-card">
-      <p className="eyebrow">INVITACIÓN A MORAVÍA</p>
-      <h1>
-        {state.loading
-          ? 'Comprobando invitación…'
-          : state.valid
-            ? 'Tu invitación es válida'
-            : state.unavailable
-              ? 'No hemos podido comprobar la invitación'
-              : 'Esta invitación no está disponible'}
-      </h1>
-      <p className="muted">
-        {state.valid
-          ? 'La incorporación de vecinos estará disponible próximamente.'
-          : state.loading
-            ? 'Un momento, por favor.'
-            : state.unavailable
-              ? 'Comprueba tu conexión e inténtalo de nuevo.'
-              : 'Puede haber caducado o haber sido revocada. Pide una nueva al presidente de tu comunidad.'}
-      </p>
-      <a className="text-button" href="/">
-        Volver al inicio
-      </a>
-    </section>
-  );
-}
-
 export default function App() {
+  const skipSessionLookup = useRef(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -502,6 +458,7 @@ export default function App() {
       setLoading(false);
       return;
     }
+    if (skipSessionLookup.current) return;
     api('/api/auth/me')
       .then((data) => setUser(data.user))
       .catch((err) => {
@@ -546,7 +503,14 @@ export default function App() {
         {loading ? (
           <p className="muted">Cargando…</p>
         ) : isJoin ? (
-          <Join />
+          <Join
+            api={api}
+            onRegistered={(resident) => {
+              skipSessionLookup.current = true;
+              window.history.replaceState(null, '', '/');
+              setUser(resident);
+            }}
+          />
         ) : user ? (
           <>
             <div className="page-intro">
@@ -560,7 +524,23 @@ export default function App() {
               </span>
             </div>
             {user.role === 'president' && user.communityId ? (
-              <Invitations communityId={user.communityId} />
+              <>
+                {!DEMO && <MembershipRequests api={api} communityId={user.communityId} />}
+                <Invitations communityId={user.communityId} />
+              </>
+            ) : user.membershipStatus === 'pending' ? (
+              <section className="card">
+                <h2>Pendiente de validación</h2>
+                <p>
+                  El presidente revisará tu solicitud. Vuelve a cargar el panel para consultar su
+                  estado.
+                </p>
+              </section>
+            ) : user.membershipStatus === 'rejected' ? (
+              <section className="card">
+                <h2>Solicitud denegada</h2>
+                <p>Contacta con el presidente de tu comunidad si necesitas ayuda.</p>
+              </section>
             ) : !user.communityId ? (
               <CreateCommunity onCreated={setUser} />
             ) : (

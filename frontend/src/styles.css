@@ -22,7 +22,8 @@ body {
   line-height: 1.5;
 }
 button,
-input {
+input,
+select {
   font: inherit;
 }
 button {
@@ -167,7 +168,8 @@ label {
   font-weight: 700;
   font-size: 12px;
 }
-input {
+input,
+select {
   width: 100%;
   min-width: 0;
   background: #fbfcf9;
@@ -179,7 +181,8 @@ input {
   font-size: 14px;
   font-weight: 400;
 }
-input:focus {
+input:focus,
+select:focus {
   border-color: #799668;
   box-shadow: 0 0 0 3px #dce9d3;
 }
@@ -372,4 +375,17 @@ footer span {
   .role {
     white-space: nowrap;
   }
+}
+.membership-card {
+  margin-bottom: 20px;
+}
+
+.membership-list {
+  list-style: none;
+  padding: 0;
+}
+
+.membership-list li {
+  padding: 14px 0;
+  border-bottom: 1px solid #e8ede5;
 }

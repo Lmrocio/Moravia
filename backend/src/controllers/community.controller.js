@@ -61,7 +61,7 @@ export async function createCommunity(req, res) {
 // POST /api/communities/:id/invitation
 // Genera un token de invitación de 48 h. Solo puede hacerlo el presidente de esa
 // comunidad. Una invitación nueva sustituye a la anterior, que deja de funcionar.
-async function getPresidentCommunity(req) {
+export async function getPresidentCommunity(req) {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     throw new AppError(404, 'Comunidad no encontrada');
@@ -73,9 +73,11 @@ async function getPresidentCommunity(req) {
   }
 
   const isPresident =
-    req.user.role === ROLES.PRESIDENT && community.presidentId.equals(req.user._id);
+    req.user.role === ROLES.PRESIDENT &&
+    req.user.communityId?.equals(community._id) &&
+    community.presidentId.equals(req.user._id);
   if (!isPresident) {
-    throw new AppError(403, 'Solo el presidente de la comunidad puede generar invitaciones');
+    throw new AppError(403, 'Solo el presidente de la comunidad puede realizar esta acción');
   }
 
   return community;

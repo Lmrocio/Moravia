@@ -59,7 +59,7 @@ export async function demoApi(path, { method = 'GET', body } = {}) {
     }
     if (invitation?.token !== body.token || new Date(invitation.expiresAt) <= new Date())
       demoError('La invitación no es válida o ha caducado', 404);
-    return { valid: true, expiresAt: invitation.expiresAt };
+    return { valid: true, expiresAt: invitation.expiresAt, demo: true };
   }
   demoError('Acción no disponible en la demostración.', 404);
 }
