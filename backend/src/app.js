@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import { csrfProtection } from './middlewares/csrf.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
+import communityRoutes from './routes/community.routes.js';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/communities', communityRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
