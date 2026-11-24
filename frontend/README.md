@@ -16,6 +16,8 @@ Vite redirige `/api` al backend local. En producción, configura `VITE_API_URL` 
 
 El token de invitación solo se muestra una vez: tras recargar hay que generar otro para compartirlo, lo que invalida el anterior. Se puede revocar desde el panel incluso después de recargar.
 
+El pie de página enlaza a privacidad, cookies y términos de uso. El alojamiento debe servir `index.html` cuando alguien abra directamente cualquiera de esas rutas.
+
 ## Demostración sin backend
 
 Con `npm run dev`, abre `http://localhost:5173/?demo=1`. El modo de demostración permite probar la creación de una comunidad y la interfaz del QR con datos ficticios, sin servidor ni base de datos. El enlace de prueba solo se valida en la misma pestaña; no crea una invitación real y no sirve para incorporar vecinos. El modo está deshabilitado en compilaciones de producción.

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { demoApi } from './demo.js';
 import { Join, MembershipRequests } from './Membership.jsx';
+import { CookieNotice, getLegalPage, LegalLinks, LegalPage, PolicyAcceptance } from './Legal.jsx';
 import './styles.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
@@ -67,7 +68,10 @@ function Auth({ onLogin }) {
     setLoading(true);
     try {
       const body = { email: form.get('email'), password: form.get('password') };
-      if (register) body.name = form.get('name');
+      if (register) {
+        body.name = form.get('name');
+        body.acceptPolicies = form.has('acceptPolicies');
+      }
       const data = await api(`/api/auth/${register ? 'register' : 'login'}`, {
         method: 'POST',
         body,
@@ -110,6 +114,7 @@ function Auth({ onLogin }) {
             required
           />
         </label>
+        {register && <PolicyAcceptance />}
         {error && (
           <p className="error" role="alert">
             {error}
@@ -453,8 +458,9 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const isJoin = window.location.pathname === '/unirse';
+  const legalPage = getLegalPage(window.location.pathname);
   useEffect(() => {
-    if (isJoin) {
+    if (isJoin || legalPage) {
       setLoading(false);
       return;
     }
@@ -465,7 +471,7 @@ export default function App() {
         if (err.status !== 401) setError('No se ha podido conectar con el servidor.');
       })
       .finally(() => setLoading(false));
-  }, [isJoin]);
+  }, [isJoin, legalPage]);
 
   async function logout() {
     try {
@@ -500,7 +506,9 @@ export default function App() {
         </div>
       )}
       <main className="container">
-        {loading ? (
+        {legalPage ? (
+          <LegalPage page={legalPage} />
+        ) : loading ? (
           <p className="muted">Cargando…</p>
         ) : isJoin ? (
           <Join
@@ -561,7 +569,9 @@ export default function App() {
       </main>
       <footer>
         Moravía <span>·</span> Tu comunidad, más cerca.
+        <LegalLinks />
       </footer>
+      <CookieNotice />
     </>
   );
 }

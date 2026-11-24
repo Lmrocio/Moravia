@@ -23,7 +23,7 @@ async function signUp(email) {
   const res = await agent
     .post('/api/auth/register')
     .set('X-CSRF-Token', csrf)
-    .send({ name: 'Usuario de prueba', email, password: 'contraseña-segura' })
+    .send({ name: 'Usuario de prueba', email, password: 'contraseña-segura', acceptPolicies: true })
     .expect(201);
   return { agent, csrf, user: res.body.user };
 }
@@ -247,13 +247,20 @@ describe('Validación y revocación de invitaciones', () => {
     return { president, communityId, token: response.body.invitation.token, validate };
   }
 
-  async function registerViaInvitation(token, dwellingId, email) {
+  async function registerViaInvitation(token, dwellingId, email, acceptPolicies = true) {
     const agent = request.agent(app);
     const { body } = await agent.get('/api/auth/csrf').expect(200);
     const response = await agent
       .post('/api/invitations/register')
       .set('X-CSRF-Token', body.csrfToken)
-      .send({ token, dwellingId, email, name: 'Vecino de prueba', password: 'clave-segura' });
+      .send({
+        token,
+        dwellingId,
+        email,
+        name: 'Vecino de prueba',
+        password: 'clave-segura',
+        acceptPolicies,
+      });
     return { agent, response };
   }
 
@@ -262,6 +269,14 @@ describe('Validación y revocación de invitaciones', () => {
     const available = (await validate(token).expect(200)).body.dwellings;
     const dwelling = available.find(({ label }) => label === '2º B');
     expect(dwelling).toBeDefined();
+    const declined = await registerViaInvitation(
+      token,
+      dwelling.id,
+      'sin-aceptar@example.com',
+      false,
+    );
+    expect(declined.response.status).toBe(400);
+    expect(declined.response.body.details[0].field).toBe('acceptPolicies');
     const admissions = await Promise.all([
       registerViaInvitation(token, dwelling.id, 'vecino1@example.com'),
       registerViaInvitation(token, dwelling.id, 'vecino2@example.com'),

@@ -6,8 +6,60 @@ vi.mock('qrcode.react', () => ({
   QRCodeCanvas: ({ value }) => <canvas aria-label="Código QR de invitación" data-value={value} />,
 }));
 
+it.each([
+  ['/legal/privacidad', 'Política de privacidad'],
+  ['/legal/cookies', 'Política de cookies'],
+  ['/legal/terminos', 'Términos de uso'],
+])('abre %s sin consultar la sesión', (path, title) => {
+  window.history.replaceState({}, '', path);
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  render(<App />);
+  expect(screen.getByRole('heading', { name: title, level: 1 })).toBeTruthy();
+  expect(fetch).not.toHaveBeenCalled();
+});
+
+it('recuerda la aceptación del aviso de cookies al volver a abrir la aplicación', () => {
+  window.history.replaceState({}, '', '/legal/cookies');
+  const firstVisit = render(<App />);
+  expect(screen.getByRole('link', { name: 'Más información' }).getAttribute('href')).toBe(
+    '/legal/cookies',
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Aceptar técnicas' }));
+  expect(screen.queryByRole('button', { name: 'Aceptar técnicas' })).toBeNull();
+  firstVisit.unmount();
+  render(<App />);
+  expect(screen.queryByRole('button', { name: 'Aceptar técnicas' })).toBeNull();
+});
+
+it('exige el checkbox al crear una cuenta desde la pantalla de acceso', async () => {
+  const fetch = vi.fn(async (url) => {
+    if (url.endsWith('/me')) return { ok: false, status: 401, json: async () => ({}) };
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ csrfToken: 'csrf', user: { name: 'Eva' } }),
+    };
+  });
+  vi.stubGlobal('fetch', fetch);
+  fireEvent.click(await render(<App />).findByRole('button', { name: /Regístrate/ }));
+  fireEvent.change(screen.getByLabelText('Nombre completo'), { target: { value: 'Eva' } });
+  fireEvent.change(screen.getByLabelText('Correo electrónico'), {
+    target: { value: 'eva@example.com' },
+  });
+  fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'clave-segura' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Crear cuenta' }));
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/register'))).toBe(false);
+  fireEvent.click(screen.getByRole('checkbox', { name: /Acepto los términos/ }));
+  fireEvent.click(screen.getByRole('button', { name: 'Crear cuenta' }));
+  await screen.findByRole('heading', { name: 'Panel de comunidad' });
+  const [, options] = fetch.mock.calls.find(([url]) => url.endsWith('/register'));
+  expect(JSON.parse(options.body).acceptPolicies).toBe(true);
+});
+
 afterEach(() => {
   cleanup();
+  window.localStorage.clear();
   window.history.replaceState({}, '', '/');
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
@@ -110,10 +162,14 @@ it('solicita una vivienda desde el enlace y muestra el estado pendiente', async 
   fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'clave-segura' } });
   fireEvent.change(screen.getByLabelText('Vivienda'), { target: { value: 'dwelling' } });
   fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }));
+  expect(requests.mock.calls.some(([url]) => url.endsWith('/register'))).toBe(false);
+  fireEvent.click(screen.getByRole('checkbox', { name: /Acepto los términos/ }));
+  fireEvent.click(screen.getByRole('button', { name: 'Enviar solicitud' }));
   expect(await screen.findByRole('heading', { name: 'Pendiente de validación' })).toBeTruthy();
   const [, options] = requests.mock.calls.find(([url]) => url.endsWith('/register'));
   expect(JSON.parse(options.body)).toMatchObject({
     token: 'token-de-prueba',
+    acceptPolicies: true,
     dwellingId: 'dwelling',
   });
   expect(window.location.pathname).toBe('/');

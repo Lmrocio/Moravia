@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PolicyAcceptance } from './Legal.jsx';
 
 function rejectedToken(error) {
   return error.status === 400 || error.status === 404;
@@ -30,6 +31,7 @@ export function Join({ api, onRegistered }) {
   async function submit(event) {
     event.preventDefault();
     const body = Object.fromEntries(new FormData(event.currentTarget));
+    body.acceptPolicies = body.acceptPolicies === 'on';
     setSending(true);
     setError('');
     try {
@@ -122,6 +124,7 @@ export function Join({ api, onRegistered }) {
                 ))}
               </select>
             </label>
+            <PolicyAcceptance />
             {error && (
               <p className="error" role="alert">
                 {error}

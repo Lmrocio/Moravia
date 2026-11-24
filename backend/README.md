@@ -65,6 +65,8 @@ La sesión es un **JWT guardado en una cookie `HttpOnly`** (`moravia_token`): el
 | `GET` | `/api/auth/me` | Sí | Devuelve el usuario conectado. `200`, `401`. |
 | `POST` | `/api/auth/logout` | No | Borra la cookie de sesión. `204`. |
 
+Los dos formularios de alta envían `acceptPolicies: true` al marcar la casilla de aceptación.
+
 Flujo desde el frontend (con `fetch` o Axios, siempre con `credentials: 'include'` / `withCredentials: true`):
 
 1. Al cargar la app: `GET /api/auth/csrf` y guardar `csrfToken` en memoria.

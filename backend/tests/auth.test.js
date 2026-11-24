@@ -3,7 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import app from '../src/app.js';
 import { User } from '../src/models/User.js';
 
-const carmen = { name: 'Carmen López', email: 'carmen@example.com', password: 'contraseña-segura' };
+const carmen = { name: 'Carmen López', email: 'carmen@example.com', password: 'contraseña-segura', acceptPolicies: true };
 
 let agent;
 let csrf;
@@ -39,6 +39,14 @@ describe('CSRF', () => {
 });
 
 describe('POST /api/auth/register', () => {
+  it('exige una aceptación explícita de las políticas', async () => {
+    const res = await agent.post('/api/auth/register')
+      .set('X-CSRF-Token', csrf)
+      .send({ ...carmen, acceptPolicies: false })
+      .expect(400);
+    expect(res.body.details).toEqual([expect.objectContaining({ field: 'acceptPolicies' })]);
+    expect(await User.exists({ email: carmen.email })).toBeNull();
+  });
   it('crea la cuenta, inicia sesión y no devuelve la contraseña', async () => {
     const res = await agent.post('/api/auth/register').set('X-CSRF-Token', csrf).send(carmen).expect(201);
 
@@ -73,7 +81,7 @@ describe('POST /api/auth/register', () => {
     const res = await agent
       .post('/api/auth/register')
       .set('X-CSRF-Token', csrf)
-      .send({ name: 'C', email: 'no-es-correo', password: 'corta' })
+      .send({ ...carmen, name: 'C', email: 'no-es-correo', password: 'corta' })
       .expect(400);
     const fields = res.body.details.map((d) => d.field).sort();
     expect(fields).toEqual(['email', 'name', 'password']);

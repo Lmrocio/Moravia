@@ -15,6 +15,7 @@ const email = z
   .pipe(z.email('Correo no válido').max(254));
 
 export const registerSchema = z.object({
+  acceptPolicies: z.literal(true, { error: 'Debes aceptar los términos y leer las políticas' }),
   name: z
     .string({ error: 'El nombre es obligatorio' })
     .trim()
