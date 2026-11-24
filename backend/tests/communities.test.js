@@ -230,3 +230,84 @@ describe('POST /api/communities/:id/invitation', () => {
       .expect(401);
   });
 });
+
+describe('Validación y revocación de invitaciones', () => {
+  async function setupInvitation() {
+    const president = await signUp('presidente@example.com');
+    const community = await createCommunity(president).expect(201);
+    const communityId = community.body.community.id;
+    const response = await president.agent
+      .post(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(201);
+    const guest = request.agent(app);
+    const csrf = (await guest.get('/api/auth/csrf').expect(200)).body.csrfToken;
+    const validate = (token) =>
+      guest.post('/api/invitations/validate').set('X-CSRF-Token', csrf).send({ token });
+    return { president, communityId, token: response.body.invitation.token, validate };
+  }
+
+  it('acepta un token activo y rechaza uno caducado aunque siga guardado', async () => {
+    const { token, validate } = await setupInvitation();
+    await validate(token)
+      .expect(200)
+      .expect(({ body }) => expect(body.valid).toBe(true));
+    await Invitation.updateOne(
+      { tokenHash: hashToken(token) },
+      { expiresAt: new Date(Date.now() - 1000) },
+    );
+    expect(await Invitation.exists({ tokenHash: hashToken(token) })).not.toBeNull();
+    await validate(token).expect(404);
+  });
+
+  it('el presidente revoca la invitación y deja de poder validarse', async () => {
+    const { president, communityId, token, validate } = await setupInvitation();
+    await president.agent
+      .delete(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(204);
+    await validate(token).expect(404);
+    await president.agent
+      .delete(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(204);
+  });
+
+  it('rechaza el token anterior cuando se genera uno nuevo', async () => {
+    const { president, communityId, token, validate } = await setupInvitation();
+    const next = await president.agent
+      .post(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(201);
+    await validate(token).expect(404);
+    await validate(next.body.invitation.token).expect(200);
+  });
+
+  it('impide revocar a un vecino y al presidente de otra comunidad', async () => {
+    const { communityId, token, validate } = await setupInvitation();
+    const neighbor = await signUp('vecino@example.com');
+    await User.updateOne({ _id: neighbor.user.id }, { communityId, role: 'resident' });
+    await neighbor.agent
+      .delete(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', neighbor.csrf)
+      .expect(403);
+    const other = await signUp('otro@example.com');
+    await createCommunity(other).expect(201);
+    await other.agent
+      .delete(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', other.csrf)
+      .expect(403);
+    await validate(token).expect(200);
+  });
+
+  it('exige sesión para revocar y valida el formato del token', async () => {
+    const { communityId, validate } = await setupInvitation();
+    const anonymous = request.agent(app);
+    const csrf = (await anonymous.get('/api/auth/csrf')).body.csrfToken;
+    await anonymous
+      .delete(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', csrf)
+      .expect(401);
+    await validate('invalido').expect(400);
+  });
+});

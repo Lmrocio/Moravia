@@ -61,7 +61,7 @@ export async function createCommunity(req, res) {
 // POST /api/communities/:id/invitation
 // Genera un token de invitación de 48 h. Solo puede hacerlo el presidente de esa
 // comunidad. Una invitación nueva sustituye a la anterior, que deja de funcionar.
-export async function createInvitation(req, res) {
+async function getPresidentCommunity(req) {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     throw new AppError(404, 'Comunidad no encontrada');
@@ -77,6 +77,12 @@ export async function createInvitation(req, res) {
   if (!isPresident) {
     throw new AppError(403, 'Solo el presidente de la comunidad puede generar invitaciones');
   }
+
+  return community;
+}
+
+export async function createInvitation(req, res) {
+  const community = await getPresidentCommunity(req);
 
   const token = generateToken();
   const expiresAt = new Date(Date.now() + INVITATION_TTL_MS);
@@ -95,4 +101,11 @@ export async function createInvitation(req, res) {
       joinUrl: `${env.CLIENT_ORIGIN}/unirse?token=${token}`,
     },
   });
+}
+
+// La revocación es idempotente: no revela si ya existía una invitación.
+export async function revokeInvitation(req, res) {
+  const community = await getPresidentCommunity(req);
+  await Invitation.deleteOne({ communityId: community._id });
+  res.status(204).end();
 }

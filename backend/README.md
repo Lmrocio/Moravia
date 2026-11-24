@@ -81,6 +81,8 @@ Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
 |---|---|---|---|
 | `POST` | `/api/communities` | Usuario sin comunidad | Crea la comunidad y sus viviendas; el creador pasa a ser presidente. `201`, `400`, `401`, `409`. |
 | `POST` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Genera un token de invitación válido 48 h. `201`, `401`, `403`, `404`. |
+| `DELETE` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Revoca la invitación vigente. `204`, `401`, `403`, `404`. |
+| `POST` | `/api/invitations/validate` | Público | Comprueba un token mediante `{ "token": "..." }`. `200`, `400`, `404`. Requiere CSRF. |
 
 **Crear una comunidad.** El servidor genera las viviendas a partir de la estructura del edificio:
 
@@ -97,6 +99,8 @@ Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
 Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 a 50; `doorsPerFloor` y `groundFloorDoors` (opcional, 0 por defecto) de 0 a 26. La comunidad, sus viviendas y el cambio de rol del usuario se guardan en una transacción: si algo falla, no se guarda nada.
 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
+
+La validación comprueba `expiresAt` además de buscar el hash: la eliminación por TTL puede retrasarse. El endpoint de validación solo comprueba el token; el alta de vecinos deberá comprobarlo de nuevo al utilizarlo e implementarse por separado.
 
 ## Estructura
 
