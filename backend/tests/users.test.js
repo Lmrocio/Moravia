@@ -3,9 +3,11 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import app from '../src/app.js';
 import { Community } from '../src/models/Community.js';
 import { Dwelling } from '../src/models/Dwelling.js';
+import { Invitation } from '../src/models/Invitation.js';
 import { User } from '../src/models/User.js';
 
 const password = 'contraseña-segura';
+const building = { name: 'Comunidad', address: 'Calle 1', floors: 1, doorsPerFloor: 2 };
 
 // Registra un usuario y devuelve su "navegador" (agent) con la sesión y el token CSRF.
 async function signUp(email = 'carmen@example.com') {
@@ -21,13 +23,36 @@ async function signUp(email = 'carmen@example.com') {
   return { agent, csrf, user: res.body.user, sessionCookie: sessionCookie.split(';')[0] };
 }
 
-// Sin async: así devuelve la petición de Supertest y se puede encadenar .expect().
+// Sin async: así devuelven la petición de Supertest y se puede encadenar .expect().
 function deleteAccount(session, body = { password }) {
   return session.agent.delete('/api/users/me').set('X-CSRF-Token', session.csrf).send(body);
 }
 
+function createCommunity(session) {
+  return session.agent.post('/api/communities').set('X-CSRF-Token', session.csrf).send(building);
+}
+
+function transferPresidency(session, userId) {
+  return session.agent
+    .post('/api/users/me/presidency/transfer')
+    .set('X-CSRF-Token', session.csrf)
+    .send({ userId });
+}
+
+// Crea una comunidad con su presidente y un vecino validado.
+async function communityWithResident() {
+  const president = await signUp('presidente@example.com');
+  const { body } = await createCommunity(president).expect(201);
+  const resident = await signUp('vecino@example.com');
+  await User.updateOne(
+    { _id: resident.user.id },
+    { communityId: body.community.id, membershipStatus: 'validated' },
+  );
+  return { president, resident, communityId: body.community.id };
+}
+
 beforeAll(async () => {
-  await Promise.all([User.init(), Community.init(), Dwelling.init()]);
+  await Promise.all([User.init(), Community.init(), Dwelling.init(), Invitation.init()]);
 });
 
 describe('GET /api/users/me/export', () => {
@@ -41,7 +66,7 @@ describe('GET /api/users/me/export', () => {
 
     expect(res.headers['content-type']).toMatch(/application\/json/);
     expect(res.headers['content-disposition']).toMatch(
-           /attachment; filename="?moravia-mis-datos-\d{4}-\d{2}-\d{2}\.json"?/,
+      /attachment; filename="?moravia-mis-datos-\d{4}-\d{2}-\d{2}\.json"?/,
     );
     expect(res.body.profile).toMatchObject({ name: 'Carmen López', email: 'carmen@example.com' });
     expect(res.body.profile).not.toHaveProperty('passwordHash');
@@ -90,18 +115,6 @@ describe('DELETE /api/users/me', () => {
     expect((await User.findById(carmen.user.id)).deletedAt).toBeNull();
   });
 
-  it('no deja eliminar la cuenta al presidente de una comunidad (409)', async () => {
-    const president = await signUp();
-    await president.agent
-      .post('/api/communities')
-      .set('X-CSRF-Token', president.csrf)
-      .send({ name: 'Comunidad', address: 'Calle 1', floors: 1, doorsPerFloor: 2 })
-      .expect(201);
-
-    const res = await deleteAccount(president).expect(409);
-    expect(res.body.error).toMatch(/transfiere la presidencia/);
-  });
-
   it('anonimiza los datos personales pero conserva el documento', async () => {
     const carmen = await signUp();
     const community = await Community.create({
@@ -121,12 +134,31 @@ describe('DELETE /api/users/me', () => {
     const after = await User.findById(carmen.user.id).select('+passwordHash');
     expect(after).not.toBeNull();
     expect(after.name).toBe('Usuario eliminado');
-    expect(after.email).toBe(`eliminado-${carmen.user.id}@moravia.invalid`);
     expect(after.passwordHash).not.toBe(before.passwordHash);
     expect(after.communityId).toBeNull();
     expect(after.dwellingId).toBeNull();
     expect(after.membershipStatus).toBe('none');
     expect(after.deletedAt).toBeInstanceOf(Date);
+  });
+
+  it('usa un correo aleatorio que no se puede adivinar a partir del id', async () => {
+    const carmen = await signUp();
+    await deleteAccount(carmen).expect(204);
+
+    const { email } = await User.findById(carmen.user.id);
+    expect(email).toMatch(/^eliminado-[a-f0-9]{24}@moravia\.invalid$/);
+    expect(email).not.toContain(carmen.user.id);
+  });
+
+  it('no deja registrarse con el dominio reservado para cuentas eliminadas', async () => {
+    const agent = request.agent(app);
+    const { body } = await agent.get('/api/auth/csrf');
+    const res = await agent
+      .post('/api/auth/register')
+      .set('X-CSRF-Token', body.csrfToken)
+      .send({ name: 'Intruso', email: 'eliminado-algo@moravia.invalid', password })
+      .expect(400);
+    expect(res.body.details[0].field).toBe('email');
   });
 
   it('revoca el acceso: cierra la sesión y no se puede volver a entrar', async () => {
@@ -163,5 +195,101 @@ describe('DELETE /api/users/me', () => {
       .set('X-CSRF-Token', body.csrfToken)
       .send({ password })
       .expect(401);
+  });
+});
+
+describe('Baja del presidente', () => {
+  it('si tiene vecinos, no puede darse de baja sin transferir la presidencia (409)', async () => {
+    const { president, communityId } = await communityWithResident();
+
+    const res = await deleteAccount(president).expect(409);
+    expect(res.body.error).toMatch(/transfiere la presidencia/);
+    expect(await Community.exists({ _id: communityId })).not.toBeNull();
+  });
+
+  it('si está solo, se da de baja y la comunidad desaparece con él', async () => {
+    const president = await signUp('presidente@example.com');
+    const { body } = await createCommunity(president).expect(201);
+    const communityId = body.community.id;
+    await president.agent
+      .post(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(201);
+
+    await deleteAccount(president).expect(204);
+
+    expect(await Community.exists({ _id: communityId })).toBeNull();
+    expect(await Dwelling.countDocuments({ communityId })).toBe(0);
+    expect(await Invitation.countDocuments({ communityId })).toBe(0);
+    expect((await User.findById(president.user.id)).deletedAt).toBeInstanceOf(Date);
+  });
+
+  it('tras transferir la presidencia, puede darse de baja', async () => {
+    const { president, resident, communityId } = await communityWithResident();
+
+    await transferPresidency(president, resident.user.id).expect(200);
+    await deleteAccount(president).expect(204);
+
+    const community = await Community.findById(communityId);
+    expect(community.presidentId.toString()).toBe(resident.user.id);
+  });
+});
+
+describe('POST /api/users/me/presidency/transfer', () => {
+  it('cede la presidencia a un vecino validado de la comunidad', async () => {
+    const { president, resident, communityId } = await communityWithResident();
+
+    const res = await transferPresidency(president, resident.user.id).expect(200);
+    expect(res.body.president).toEqual({ id: resident.user.id, name: 'Carmen López' });
+
+    expect((await User.findById(resident.user.id)).role).toBe('president');
+    expect((await User.findById(president.user.id)).role).toBe('resident');
+    expect((await Community.findById(communityId)).presidentId.toString()).toBe(resident.user.id);
+
+    // El nuevo presidente ya puede generar invitaciones y el antiguo ya no.
+    await resident.agent
+      .post(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', resident.csrf)
+      .expect(201);
+    await president.agent
+      .post(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(403);
+  });
+
+  it('no se puede ceder a uno mismo (400) ni con un id no válido (400)', async () => {
+    const { president } = await communityWithResident();
+    await transferPresidency(president, president.user.id).expect(400);
+    await transferPresidency(president, 'no-es-un-id').expect(400);
+  });
+
+  it('solo se puede ceder a un vecino validado de la misma comunidad (404)', async () => {
+    const { president, resident } = await communityWithResident();
+    const outsider = await signUp('otro@example.com');
+    await transferPresidency(president, outsider.user.id).expect(404);
+
+    await User.updateOne({ _id: resident.user.id }, { membershipStatus: 'pending' });
+    await transferPresidency(president, resident.user.id).expect(404);
+  });
+
+  it('un vecino no puede transferir la presidencia (403)', async () => {
+    const { president, resident } = await communityWithResident();
+    await transferPresidency(resident, president.user.id).expect(403);
+  });
+});
+
+describe('Concurrencia entre la baja y la creación de comunidades', () => {
+  it('nunca queda una comunidad cuyo presidente ha eliminado su cuenta', async () => {
+    for (let i = 0; i < 5; i++) {
+      const user = await signUp(`concurrente${i}@example.com`);
+
+      // Las dos peticiones salen a la vez; el orden en que terminan varía.
+      await Promise.all([deleteAccount(user), createCommunity(user)]);
+
+      const deleted = await User.find({ deletedAt: { $ne: null } }).select('_id');
+      const orphan = await Community.exists({ presidentId: { $in: deleted.map((u) => u._id) } });
+      expect(orphan).toBeNull();
+      expect((await User.findById(user.user.id)).deletedAt).toBeInstanceOf(Date);
+    }
   });
 });
