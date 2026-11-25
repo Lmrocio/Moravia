@@ -14,9 +14,14 @@ const INVITATION_TTL_MS = 48 * 60 * 60 * 1000; // 48 horas
 // Crea la comunidad y sus viviendas, y convierte al usuario en presidente.
 // Todo va en una transacción: si algo falla, no se guarda nada.
 export async function createCommunity(req, res) {
-  const { name, address, floors, doorsPerFloor, groundFloorDoors } = req.body;
+  const { name, address, floors, doorsPerFloor, groundFloorDoors, floorDoorCounts } = req.body;
   const communityId = new mongoose.Types.ObjectId();
-  const dwellingData = buildDwellings({ floors, doorsPerFloor, groundFloorDoors }).map((d) => ({
+  const dwellingData = buildDwellings({
+    floors,
+    doorsPerFloor,
+    groundFloorDoors,
+    floorDoorCounts,
+  }).map((d) => ({
     ...d,
     communityId,
   }));

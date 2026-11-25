@@ -14,7 +14,7 @@ El equipo está formado por Rocío Luque Montes y Pablo Sanz Aznar. Ambos revisa
 
 | Integrante | Responsabilidad principal | Apoyo compartido |
 |---|---|---|
-| Rocío Luque Montes | Frontend Lead, UI/UX Designer y QA Manager: React 19, Tailwind 4, diseño móvil, pruebas de interfaz y documentación. | Pruebas de uso, integración, revisión y documentación. |
+| Rocío Luque Montes | Frontend Lead, UI/UX Designer y QA Manager: React 19, CSS, diseño móvil, pruebas de interfaz y documentación. | Pruebas de uso, integración, revisión y documentación. |
 | Pablo Sanz Aznar | Backend Lead, Database Administrator y DevOps: Node 24, Express 5, Mongoose, transacciones, Cloudinary y despliegue. | Pruebas técnicas, integración, revisión y documentación. |
 
 Pablo concentra varias áreas técnicas; Rocío apoyará la integración y el despliegue, y ambos revisarán semanalmente el reparto.
@@ -43,7 +43,7 @@ Las versiones son **líneas o versiones de referencia propuestas**, no dependenc
 |---|---|---|
 | Entorno | Node.js 24 LTS, npm 11 | JavaScript en servidor y herramientas de construcción. |
 | Interfaz | React 19, Vite 7, React Router 7 | Componentes, desarrollo y rutas de interfaz. |
-| Estilos | Tailwind CSS 4 | Diseño adaptable a móvil con utilidades. |
+| Estilos | CSS | Diseño adaptable a móvil con variables y componentes reutilizables. |
 | QR | qrcode.react 4 | Representación del enlace de invitación en pantalla. |
 | API | Express 5, Mongoose 8 | Rutas HTTP y modelos/validación de MongoDB. |
 | Acceso | jsonwebtoken 9, bcrypt 6, cookie-parser 1, express-rate-limit 8 | Sesiones, hash de contraseñas, cookies y limitación de intentos; añadir protección CSRF según la configuración definitiva. |

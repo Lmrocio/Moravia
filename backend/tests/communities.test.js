@@ -38,6 +38,25 @@ beforeAll(async () => {
 });
 
 describe('POST /api/communities', () => {
+  it('crea una distribución diferente en cada planta y valida su longitud', async () => {
+    const president = await signUp('plantas@example.com');
+    const data = {
+      ...building,
+      floors: 3,
+      doorsPerFloor: 2,
+      groundFloorDoors: 1,
+      floorDoorCounts: [1, 3, 0],
+    };
+    await createCommunity(president, { ...data, floorDoorCounts: [1, 3] }).expect(400);
+    const result = await createCommunity(president, data).expect(201);
+    expect(result.body.dwellings.map((d) => d.label)).toEqual([
+      'Bajo A',
+      '1º A',
+      '2º A',
+      '2º B',
+      '2º C',
+    ]);
+  });
   it('exige iniciar sesión (401)', async () => {
     const agent = request.agent(app);
     const { body } = await agent.get('/api/auth/csrf');
@@ -256,6 +275,50 @@ describe('Validación y revocación de invitaciones', () => {
       .send({ token, dwellingId, email, name: 'Vecino de prueba', password: 'clave-segura' });
     return { agent, response };
   }
+
+  it('permite que una cuenta existente solicite una vivienda con una invitación activa', async () => {
+    const { communityId, token, validate } = await setupInvitation();
+    const dwelling = (await validate(token).expect(200)).body.dwellings[0];
+    const resident = await signUp('cuenta-existente@example.com');
+    const send = (invitationToken, dwellingId) =>
+      resident.agent
+        .post('/api/invitations/accept')
+        .set('X-CSRF-Token', resident.csrf)
+        .send({ token: invitationToken, dwellingId });
+    const response = await send(token, dwelling.id).expect(200);
+    expect(response.body.user).toMatchObject({
+      id: resident.user.id,
+      communityId,
+      dwellingId: dwelling.id,
+      membershipStatus: 'pending',
+    });
+    expect((await resident.agent.get('/api/auth/me').expect(200)).body.user.membershipStatus).toBe(
+      'pending',
+    );
+    await send(token, dwelling.id).expect(409);
+  });
+
+  it('rechaza cuentas sin sesión, invitaciones revocadas y viviendas ajenas', async () => {
+    const { token, validate } = await setupInvitation();
+    const dwelling = (await validate(token).expect(200)).body.dwellings[0];
+    const guest = request.agent(app);
+    const csrf = (await guest.get('/api/auth/csrf')).body.csrfToken;
+    await guest
+      .post('/api/invitations/accept')
+      .set('X-CSRF-Token', csrf)
+      .send({ token, dwellingId: dwelling.id })
+      .expect(401);
+    const resident = await signUp('cuenta@example.com');
+    const send = (dwellingId) =>
+      resident.agent
+        .post('/api/invitations/accept')
+        .set('X-CSRF-Token', resident.csrf)
+        .send({ token, dwellingId });
+    await send('6afe2444170a6f73af29af80').expect(400);
+    await Invitation.deleteOne({ tokenHash: hashToken(token) });
+    await send(dwelling.id).expect(404);
+    expect((await resident.agent.get('/api/auth/me')).body.user.communityId).toBeNull();
+  });
 
   it('reserva la vivienda al solicitarla, la libera al denegar y conserva otra al aprobar', async () => {
     const { president, communityId, token, validate } = await setupInvitation();

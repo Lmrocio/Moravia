@@ -1,10 +1,11 @@
+import { FormError, ValidatedForm } from './components/common/Feedback.jsx';
 import { useEffect, useState } from 'react';
 
 function rejectedToken(error) {
   return error.status === 400 || error.status === 404;
 }
 
-export function Join({ api, onRegistered }) {
+export function Join({ api, onRegistered, user }) {
   const token = new URLSearchParams(window.location.search).get('token');
   const [result, setResult] = useState(null);
   const [failure, setFailure] = useState(null);
@@ -33,11 +34,11 @@ export function Join({ api, onRegistered }) {
     setSending(true);
     setError('');
     try {
-      const { user } = await api('/api/invitations/register', {
+      const response = await api(user ? '/api/invitations/accept' : '/api/invitations/register', {
         method: 'POST',
         body: { ...body, token },
       });
-      onRegistered(user);
+      onRegistered(response.user);
     } catch (err) {
       // Un 400 también puede ser un campo del formulario. Solo un 404 invalida un enlace ya comprobado.
       if (err.status === 404) setFailure('invalid');
@@ -90,25 +91,29 @@ export function Join({ api, onRegistered }) {
       ) : (
         <>
           <p className="muted">Selecciona tu vivienda. El presidente revisará tu solicitud.</p>
-          <form className="form" onSubmit={submit}>
-            <label>
-              Nombre completo
-              <input name="name" autoComplete="name" minLength={2} maxLength={80} required />
-            </label>
-            <label>
-              Correo electrónico
-              <input type="email" name="email" autoComplete="email" maxLength={254} required />
-            </label>
-            <label>
-              Contraseña
-              <input
-                type="password"
-                name="password"
-                autoComplete="new-password"
-                minLength={8}
-                required
-              />
-            </label>
+          <ValidatedForm className="form" onSubmit={submit}>
+            {!user && (
+              <>
+                <label>
+                  Nombre completo
+                  <input name="name" autoComplete="name" minLength={2} maxLength={80} required />
+                </label>
+                <label>
+                  Correo electrónico
+                  <input type="email" name="email" autoComplete="email" maxLength={254} required />
+                </label>
+                <label>
+                  Contraseña
+                  <input
+                    type="password"
+                    name="password"
+                    autoComplete="new-password"
+                    minLength={8}
+                    required
+                  />
+                </label>
+              </>
+            )}
             <label>
               Vivienda
               <select name="dwellingId" defaultValue="" required>
@@ -122,11 +127,7 @@ export function Join({ api, onRegistered }) {
                 ))}
               </select>
             </label>
-            {error && (
-              <p className="error" role="alert">
-                {error}
-              </p>
-            )}
+            <FormError>{error}</FormError>
             <button className="primary" disabled={sending}>
               {sending ? 'Enviando…' : 'Enviar solicitud'}
             </button>
@@ -135,7 +136,7 @@ export function Join({ api, onRegistered }) {
                 Actualizar viviendas disponibles
               </button>
             )}
-          </form>
+          </ValidatedForm>
         </>
       )}
     </section>
@@ -230,11 +231,7 @@ export function MembershipRequests({ api, communityId }) {
           {message}
         </p>
       )}
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
+      <FormError>{error}</FormError>
     </section>
   );
 }

@@ -89,6 +89,47 @@ export async function registerResident(req, res) {
   res.status(201).json({ user });
 }
 
+export async function acceptInvitation(req, res) {
+  const { token, dwellingId } = req.body;
+  let user;
+  await User.init();
+  try {
+    await mongoose.connection.transaction(async (session) => {
+      const invitation = await Invitation.findOneAndUpdate(
+        activeToken(token),
+        { $inc: { registrationCount: 1 } },
+        { session },
+      );
+      if (!invitation) throw invalidInvitation();
+      const dwelling = await Dwelling.exists({
+        _id: dwellingId,
+        communityId: invitation.communityId,
+      }).session(session);
+      if (!dwelling) throw new AppError(400, 'Selecciona una vivienda de esta comunidad');
+      user = await User.findOneAndUpdate(
+        { _id: req.user._id, communityId: null, membershipStatus: MEMBERSHIP_STATUS.NONE },
+        {
+          $set: {
+            communityId: invitation.communityId,
+            dwellingId,
+            role: ROLES.RESIDENT,
+            membershipStatus: MEMBERSHIP_STATUS.PENDING,
+          },
+        },
+        { new: true, session, runValidators: true },
+      );
+      if (!user)
+        throw new AppError(409, 'Ya perteneces a una comunidad o tienes una solicitud pendiente');
+    });
+  } catch (error) {
+    if (error.code === 11000 && error.keyPattern?.dwellingId) {
+      throw new AppError(409, 'La vivienda ya no está disponible. Vuelve a cargar la invitación.');
+    }
+    throw error;
+  }
+  res.status(200).json({ user });
+}
+
 export async function listMembershipRequests(req, res) {
   const community = await getPresidentCommunity(req);
   const requests = await User.find({

@@ -1,0 +1,71 @@
+@import '../../styles/tokens.css';
+
+.form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  color: var(--error-text);
+  font:
+    400 12px/17px 'Open Sans',
+    sans-serif;
+}
+.form-error svg {
+  flex: 0 0 16px;
+}
+.access-field input[aria-invalid='true'][aria-invalid],
+.community-form input[aria-invalid='true'][aria-invalid],
+.form input[aria-invalid='true'][aria-invalid],
+.form select[aria-invalid='true'][aria-invalid] {
+  border-color: var(--error-text);
+}
+.success-toast {
+  position: fixed;
+  z-index: 10;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(calc(100% - 32px), 358px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid var(--success-border);
+  border-radius: 12px;
+  background: var(--success-background);
+  box-shadow: 0 4px 6px rgb(20 51 26 / 15%);
+  color: var(--success-text);
+  font:
+    400 12px/17px 'Open Sans',
+    sans-serif;
+}
+.success-toast > svg {
+  flex: none;
+}
+.success-toast > div {
+  flex: 1;
+  min-width: 0;
+}
+.success-toast strong {
+  display: block;
+  color: var(--success-emphasis);
+  font-size: 14px;
+  line-height: 20px;
+}
+.success-toast p {
+  margin: 0;
+  color: var(--success-text);
+  font-size: 12px;
+  line-height: 17px;
+}
+.success-toast button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  color: var(--success-emphasis);
+  background: transparent;
+}

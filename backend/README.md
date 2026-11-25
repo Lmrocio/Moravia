@@ -75,6 +75,8 @@ Los errores siempre tienen la forma `{ "error": "mensaje", "details": [{ "field"
 
 ## Comunidades e invitaciones
 
+Una persona que ya tiene una cuenta y todavía no pertenece a una comunidad puede solicitar una vivienda con `POST /api/invitations/accept`, enviando `{ "token", "dwellingId" }` con su sesión y el token CSRF. La solicitud queda pendiente de validación por el presidente. La invitación debe estar activa y la vivienda debe pertenecer a esa comunidad y estar disponible.
+
 Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
 
 | Método | Ruta | Quién | Descripción |
@@ -100,6 +102,8 @@ Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
 ```
 
 Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 a 50; `doorsPerFloor` y `groundFloorDoors` (opcional, 0 por defecto) de 0 a 26. La comunidad, sus viviendas y el cambio de rol del usuario se guardan en una transacción: si algo falla, no se guarda nada.
+
+Si cada planta tiene una distribución distinta, se puede añadir `floorDoorCounts`, un array con el número de viviendas de cada planta superior, en orden. Debe contener exactamente `floors` valores enteros entre 0 y 26; en ese caso sustituye a `doorsPerFloor` al generar las viviendas. La planta baja se indica por separado con `groundFloorDoors`.
 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
 

@@ -1,0 +1,24 @@
+:root {
+  --purple-50: #faf5fe;
+  --purple-100: #f1e3fc;
+  --purple-200: #d3a6f1;
+  --purple-700: #68169e;
+  --purple-800: #4c0f73;
+  --purple-900: #340851;
+  --purple-950: #210433;
+  --orange-50: #fff5ed;
+  --orange-200: #fac49d;
+  --orange-500: #e37623;
+  --orange-600: #d36a18;
+  --neutral-50: #faf9fc;
+  --neutral-200: #e9e6ed;
+  --neutral-600: #655d70;
+  --neutral-700: #4d4657;
+  --neutral-800: #352f3d;
+  --warning-background: #fffbeb;
+  --success-background: #ecfdf3;
+  --success-border: #bbf7d0;
+  --success-text: #15803d;
+  --success-emphasis: #14532d;
+  --error-text: #b91c1c;
+}

@@ -28,11 +28,27 @@ export const createCommunitySchema = z
       .max(200, 'La dirección no puede superar los 200 caracteres'),
     floors: count('El número de plantas', MAX_FLOORS),
     doorsPerFloor: count('El número de puertas por planta', MAX_DOORS_PER_FLOOR),
+    floorDoorCounts: z
+      .array(count('El número de viviendas de cada planta', MAX_DOORS_PER_FLOOR))
+      .max(MAX_FLOORS)
+      .optional(),
     groundFloorDoors: count('El número de puertas de la planta baja', MAX_DOORS_PER_FLOOR).default(
       0,
     ),
   })
-  .refine((data) => data.floors * data.doorsPerFloor + data.groundFloorDoors > 0, {
-    error: 'La comunidad debe tener al menos una vivienda',
-    path: ['floors'],
-  });
+  .refine((data) => !data.floorDoorCounts || data.floorDoorCounts.length === data.floors, {
+    error: 'Indica el número de viviendas de cada planta',
+    path: ['floorDoorCounts'],
+  })
+  .refine(
+    (data) =>
+      (data.floorDoorCounts
+        ? data.floorDoorCounts.reduce((sum, n) => sum + n, 0)
+        : data.floors * data.doorsPerFloor) +
+        data.groundFloorDoors >
+      0,
+    {
+      error: 'La comunidad debe tener al menos una vivienda',
+      path: ['floors'],
+    },
+  );

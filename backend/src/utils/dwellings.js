@@ -3,7 +3,7 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 // Genera la lista de viviendas de un edificio a partir de su estructura.
 // Ejemplo: { floors: 2, doorsPerFloor: 2, groundFloorDoors: 1 }
 //   → Bajo A, 1º A, 1º B, 2º A, 2º B
-export function buildDwellings({ floors, doorsPerFloor, groundFloorDoors = 0 }) {
+export function buildDwellings({ floors, doorsPerFloor, groundFloorDoors = 0, floorDoorCounts }) {
   const dwellings = [];
 
   for (let i = 0; i < groundFloorDoors; i++) {
@@ -11,7 +11,7 @@ export function buildDwellings({ floors, doorsPerFloor, groundFloorDoors = 0 }) 
   }
 
   for (let floor = 1; floor <= floors; floor++) {
-    for (let i = 0; i < doorsPerFloor; i++) {
+    for (let i = 0; i < (floorDoorCounts?.[floor - 1] ?? doorsPerFloor); i++) {
       dwellings.push({ floor, door: LETTERS[i], label: `${floor}º ${LETTERS[i]}` });
     }
   }

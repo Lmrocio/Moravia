@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { demoApi } from './demo.js';
 import { Join, MembershipRequests } from './Membership.jsx';
+import HomePage from './components/home/HomePage.jsx';
+import CommunityWizard from './components/community/CommunityWizard.jsx';
+import { AccessDialog, WelcomeDialog } from './components/auth/AccessDialog.jsx';
+import InvitationDialog from './components/auth/InvitationDialog.jsx';
+import { FormError, SuccessToast } from './components/common/Feedback.jsx';
 import './styles.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
@@ -53,222 +58,6 @@ async function api(path, { method = 'GET', body, csrfRetry = true } = {}) {
     throw error;
   }
   return response.status === 204 ? null : response.json();
-}
-
-function Auth({ onLogin }) {
-  const [register, setRegister] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  async function submit(event) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    setError('');
-    setLoading(true);
-    try {
-      const body = { email: form.get('email'), password: form.get('password') };
-      if (register) body.name = form.get('name');
-      const data = await api(`/api/auth/${register ? 'register' : 'login'}`, {
-        method: 'POST',
-        body,
-      });
-      onLogin(data.user);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <section className="card auth-card">
-      <p className="eyebrow">BIENVENIDO A MORAVÍA</p>
-      <h1>{register ? 'Crea tu cuenta' : 'Tu comunidad, más cerca'}</h1>
-      <p className="muted">
-        {register
-          ? 'Empieza creando tu cuenta para configurar tu comunidad.'
-          : 'Inicia sesión para gestionar tu comunidad.'}
-      </p>
-      <form onSubmit={submit} className="form">
-        {register && (
-          <label>
-            Nombre completo
-            <input name="name" autoComplete="name" minLength={2} maxLength={80} required />
-          </label>
-        )}
-        <label>
-          Correo electrónico
-          <input name="email" type="email" autoComplete="email" required />
-        </label>
-        <label>
-          Contraseña
-          <input
-            name="password"
-            type="password"
-            autoComplete={register ? 'new-password' : 'current-password'}
-            minLength={register ? 8 : 1}
-            required
-          />
-        </label>
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-        <button className="primary" disabled={loading}>
-          {loading ? 'Un momento…' : register ? 'Crear cuenta' : 'Iniciar sesión'}
-        </button>
-      </form>
-      <button
-        className="text-button"
-        onClick={() => {
-          setRegister(!register);
-          setError('');
-        }}
-      >
-        {register ? '¿Ya tienes cuenta? Inicia sesión' : '¿Todavía no tienes cuenta? Regístrate'}
-      </button>
-    </section>
-  );
-}
-
-function CreateCommunity({ onCreated }) {
-  const [fields, setFields] = useState({
-    name: '',
-    address: '',
-    floors: '',
-    doorsPerFloor: '',
-    groundFloorDoors: '0',
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const total =
-    Number(fields.floors) * Number(fields.doorsPerFloor) + Number(fields.groundFloorDoors);
-  const update = (event) => setFields({ ...fields, [event.target.name]: event.target.value });
-
-  async function submit(event) {
-    event.preventDefault();
-    if (!fields.name.trim() || !fields.address.trim() || !total) {
-      setError('Completa los datos y añade al menos una vivienda.');
-      return;
-    }
-    setLoading(true);
-    setError('');
-    try {
-      const data = await api('/api/communities', {
-        method: 'POST',
-        body: {
-          name: fields.name.trim(),
-          address: fields.address.trim(),
-          floors: Number(fields.floors),
-          doorsPerFloor: Number(fields.doorsPerFloor),
-          groundFloorDoors: Number(fields.groundFloorDoors),
-        },
-      });
-      onCreated(data.user);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <section className="card setup">
-      <div className="section-heading">
-        <div>
-          <p className="eyebrow">PRIMEROS PASOS</p>
-          <h2>Empecemos por tu comunidad</h2>
-        </div>
-        <span className="step">01 / 02</span>
-      </div>
-      <p className="muted">
-        Cuéntanos cómo es el edificio. Crearemos sus viviendas automáticamente.
-      </p>
-      <form className="form" onSubmit={submit}>
-        <label>
-          Nombre de la finca
-          <input
-            name="name"
-            value={fields.name}
-            onChange={update}
-            placeholder="Ej. Comunidad Los Olivos"
-            minLength={2}
-            maxLength={100}
-            required
-          />
-        </label>
-        <label>
-          Dirección
-          <input
-            name="address"
-            value={fields.address}
-            onChange={update}
-            placeholder="Calle, número y localidad"
-            minLength={2}
-            maxLength={200}
-            required
-          />
-        </label>
-        <div className="form-grid">
-          <label>
-            Plantas superiores
-            <input
-              type="number"
-              name="floors"
-              value={fields.floors}
-              onChange={update}
-              min="0"
-              max="50"
-              step="1"
-              required
-            />
-            <span className="hint">Sin contar la planta baja</span>
-          </label>
-          <label>
-            Puertas por planta
-            <input
-              type="number"
-              name="doorsPerFloor"
-              value={fields.doorsPerFloor}
-              onChange={update}
-              min="0"
-              max="26"
-              step="1"
-              required
-            />
-            <span className="hint">Mismo número en cada planta</span>
-          </label>
-          <label>
-            Puertas en planta baja
-            <input
-              type="number"
-              name="groundFloorDoors"
-              value={fields.groundFloorDoors}
-              onChange={update}
-              min="0"
-              max="26"
-              step="1"
-              required
-            />
-            <span className="hint">Pon 0 si no hay viviendas</span>
-          </label>
-        </div>
-        <div className="total">
-          <span>Número de viviendas</span>
-          <strong>{total}</strong>
-        </div>
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-        <button className="primary" disabled={loading}>
-          {loading ? 'Creando comunidad…' : 'Crear comunidad →'}
-        </button>
-      </form>
-    </section>
-  );
 }
 
 function Invitations({ communityId }) {
@@ -438,11 +227,7 @@ function Invitations({ communityId }) {
           {message}
         </p>
       )}
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
+      <FormError>{error}</FormError>
     </section>
   );
 }
@@ -453,11 +238,22 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const isJoin = window.location.pathname === '/unirse';
+  const [authMode, setAuthMode] = useState(null);
+  const [welcome, setWelcome] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [joinSuccess, setJoinSuccess] = useState(false);
+  const [invitation, setInvitation] = useState(false);
   useEffect(() => {
-    if (isJoin) {
-      setLoading(false);
-      return;
-    }
+    if (!registrationSuccess) return undefined;
+    const timer = setTimeout(() => setRegistrationSuccess(false), 6000);
+    return () => clearTimeout(timer);
+  }, [registrationSuccess]);
+  useEffect(() => {
+    if (!joinSuccess) return undefined;
+    const timer = setTimeout(() => setJoinSuccess(false), 6000);
+    return () => clearTimeout(timer);
+  }, [joinSuccess]);
+  useEffect(() => {
     if (skipSessionLookup.current) return;
     api('/api/auth/me')
       .then((data) => setUser(data.user))
@@ -473,13 +269,81 @@ export default function App() {
       if (DEMO) setUser((await api('/api/auth/me')).user);
       else setUser(null);
       setError('');
+      setAuthMode(null);
     } catch (err) {
       setError(err.message);
     }
   }
 
+  if (!loading && !isJoin && (!user || welcome || invitation)) {
+    return (
+      <>
+        <HomePage
+          onLogin={() => setAuthMode('login')}
+          onRegister={() => setAuthMode('register')}
+          onInvite={() => setInvitation(true)}
+        />
+        {authMode && (
+          <AccessDialog
+            initialMode={authMode}
+            api={api}
+            onClose={() => setAuthMode(null)}
+            onSuccess={(account, registered) => {
+              setUser(account);
+              setAuthMode(null);
+              setError('');
+              setWelcome(registered);
+              setRegistrationSuccess(registered);
+            }}
+          />
+        )}
+        {welcome && (
+          <WelcomeDialog
+            showSuccess={registrationSuccess}
+            onDismissSuccess={() => setRegistrationSuccess(false)}
+            onClose={() => setWelcome(false)}
+            onCreate={() => setWelcome(false)}
+            onJoin={() => {
+              setWelcome(false);
+              setInvitation(true);
+            }}
+          />
+        )}
+        {invitation && (
+          <InvitationDialog
+            onClose={() => {
+              setInvitation(false);
+              if (user) setWelcome(true);
+            }}
+            onContinue={(token) => {
+              window.location.href = `/unirse?token=${encodeURIComponent(token)}`;
+            }}
+          />
+        )}
+      </>
+    );
+  }
+
+  if (
+    !loading &&
+    !isJoin &&
+    user &&
+    !user.communityId &&
+    user.membershipStatus !== 'pending' &&
+    user.membershipStatus !== 'rejected'
+  ) {
+    return <CommunityWizard api={api} onCreated={setUser} onExit={() => setWelcome(true)} />;
+  }
+
   return (
     <>
+      {joinSuccess && (
+        <SuccessToast
+          title="Comunidad establecida"
+          message="Tu solicitud se ha guardado y está pendiente de validación."
+          onClose={() => setJoinSuccess(false)}
+        />
+      )}
       <header className="topbar">
         <a href="/" className="brand">
           <span className="brand-mark">m</span> moravía<span className="brand-dot">.</span>
@@ -505,10 +369,12 @@ export default function App() {
         ) : isJoin ? (
           <Join
             api={api}
+            user={user}
             onRegistered={(resident) => {
               skipSessionLookup.current = true;
               window.history.replaceState(null, '', '/');
               setUser(resident);
+              setJoinSuccess(true);
             }}
           />
         ) : user ? (
@@ -541,9 +407,7 @@ export default function App() {
                 <h2>Solicitud denegada</h2>
                 <p>Contacta con el presidente de tu comunidad si necesitas ayuda.</p>
               </section>
-            ) : !user.communityId ? (
-              <CreateCommunity onCreated={setUser} />
-            ) : (
+            ) : !user.communityId ? null : (
               <section className="card">
                 <h2>Tu comunidad</h2>
                 <p className="muted">Ya formas parte de una comunidad.</p>
@@ -551,13 +415,9 @@ export default function App() {
             )}
           </>
         ) : (
-          <Auth onLogin={setUser} />
+          <p className="muted">Cargando?</p>
         )}
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
+        <FormError>{error}</FormError>
       </main>
       <footer>
         Moravía <span>·</span> Tu comunidad, más cerca.

@@ -32,7 +32,7 @@ Las consultas no sustituyen los acuerdos formales de la comunidad. La separació
 
 | Capa | Tecnología prevista | Función |
 |---|---|---|
-| Interfaz | React y Tailwind CSS | Componentes y diseño adaptable a dispositivos móviles. |
+| Interfaz | React y CSS | Componentes y diseño adaptable a dispositivos móviles. |
 | Servidor | Node.js y Express | API REST, autenticación y control de acceso. |
 | Datos | MongoDB y Mongoose | Almacenamiento y modelado de los datos de la aplicación. |
 | Servicios | Vercel, Render, MongoDB Atlas y Cloudinary | Despliegue previsto, base de datos y almacenamiento de imágenes. |

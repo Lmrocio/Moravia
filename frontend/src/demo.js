@@ -25,12 +25,16 @@ export async function demoApi(path, { method = 'GET', body } = {}) {
     if (
       !body.name ||
       !body.address ||
-      body.floors * body.doorsPerFloor + body.groundFloorDoors < 1
+      (body.floorDoorCounts
+        ? body.floorDoorCounts.reduce((sum, n) => sum + n, 0)
+        : body.floors * body.doorsPerFloor) +
+        body.groundFloorDoors <
+        1
     ) {
       demoError('Completa los datos de la comunidad.');
     }
     user = { ...user, role: 'president', communityId: 'demo-comunidad' };
-    return { user };
+    return { user, community: { id: 'demo-comunidad', name: body.name } };
   }
   if (path === '/api/communities/demo-comunidad/invitation') {
     if (method === 'DELETE') {
