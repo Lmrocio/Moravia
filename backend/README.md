@@ -1,13 +1,15 @@
-# Moravía — Backend
+# Moravía — Backend.
 
 API REST de Moravía con Node.js, Express 5 y MongoDB (Mongoose 8).
 
-## Requisitos
+
+## Requisitos.
 
 - Node.js 22 o superior (recomendado 24 LTS)
 - Acceso al clúster de MongoDB Atlas del proyecto, con un usuario de base de datos y tu IP permitida en **Database & Network Access**
 
-## Puesta en marcha
+
+## Puesta en marcha.
 
 ```bash
 cd backend
@@ -30,7 +32,8 @@ npm run dev            # arranca la API con recarga automática
 
 La API queda en `http://localhost:4000`. `GET /api/health` devuelve `200` si la base de datos está conectada y `503` si no lo está.
 
-## Variables de entorno
+
+## Variables de entorno.
 
 | Variable | Por defecto | Descripción |
 |---|---|---|
@@ -44,7 +47,8 @@ La API queda en `http://localhost:4000`. `GET /api/health` devuelve `200` si la 
 | `COOKIE_SAMESITE` | `lax` | `lax` en local; `none` si frontend y API están en dominios distintos. |
 | `COOKIE_SECURE` | `true` en producción | Cookies solo por HTTPS. Obligatorio con `COOKIE_SAMESITE=none`. |
 
-## Scripts
+
+## Scripts.
 
 | Script | Qué hace |
 |---|---|
@@ -53,7 +57,8 @@ La API queda en `http://localhost:4000`. `GET /api/health` devuelve `200` si la 
 | `npm run db:check` | Crea un usuario y una comunidad de prueba en Atlas, los lee y los borra. |
 | `npm test` | Ejecuta los tests con una MongoDB en memoria (no toca Atlas). |
 
-## Autenticación
+
+## Autenticación.
 
 La sesión es un **JWT guardado en una cookie `HttpOnly`** (`moravia_token`): el JavaScript del navegador no puede leerla. Las peticiones que modifican datos (`POST`, `PUT`, `PATCH`, `DELETE`) requieren además un **token CSRF** en la cabecera `X-CSRF-Token`.
 
@@ -73,7 +78,8 @@ Flujo desde el frontend (con `fetch` o Axios, siempre con `credentials: 'include
 
 Los errores siempre tienen la forma `{ "error": "mensaje", "details": [{ "field", "message" }] }` (`details` solo en errores de validación).
 
-## Comunidades e invitaciones
+
+## Comunidades e invitaciones.
 
 Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
 
@@ -99,19 +105,27 @@ Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
 
 
-## Datos personales (RGPD)
+## Datos personales (RGPD).
 
 | Método | Ruta | Descripción |
 |---|---|---|
 | `GET` | `/api/users/me/export` | Descarga un JSON (`moravia-mis-datos-AAAA-MM-DD.json`) con el perfil, la comunidad, la vivienda y las incidencias del usuario. `200`, `401`. |
-| `DELETE` | `/api/users/me` | Elimina la cuenta. Pide `{ "password": "…" }` y la cabecera `X-CSRF-Token`. `204`, `400`, `401`, `403`, `409`. |
+| `DELETE` | `/api/users/me` | Elimina la cuenta. Pide `{ "password": "…" }`. `204`, `400`, `401`, `403`, `409`. |
+| `POST` | `/api/users/me/presidency/transfer` | El presidente cede la presidencia a un vecino validado de su comunidad (`{ "userId": "…" }`) y pasa a ser vecino. `200`, `400`, `401`, `403`, `404`. |
 
-**Eliminar la cuenta** no borra el documento: lo **anonimiza** para que las incidencias y otros registros que lo referencian sigan siendo válidos. El nombre pasa a `Usuario eliminado`, el correo a `eliminado-<id>@moravia.invalid` (el original queda libre), la contraseña a un valor aleatorio desconocido, se desvincula de su comunidad y vivienda, y se marca `deletedAt`. Las sesiones abiertas dejan de funcionar al momento.
+Las rutas `DELETE` y `POST` requieren la cabecera `X-CSRF-Token`.
 
-El **presidente** no puede eliminar su cuenta (`409`) hasta que transfiera la presidencia, para que la comunidad no se quede sin gestor.
+**Eliminar la cuenta** no borra el documento: lo **anonimiza** para que las incidencias y otros registros que lo referencian sigan siendo válidos. El nombre pasa a `Usuario eliminado`, el correo a `eliminado-<aleatorio>@moravia.invalid` (el original queda libre y nadie puede registrarse con el dominio `moravia.invalid`), la contraseña a un valor aleatorio desconocido, se desvincula de su comunidad y vivienda, y se marca `deletedAt`. Las sesiones abiertas dejan de funcionar al momento.
+
+**Baja del presidente:**
+
+- Si hay más personas en la comunidad (vecinos o solicitudes), recibe `409`: primero debe transferir la presidencia.
+- Si está solo, su baja elimina también la comunidad, sus viviendas y su invitación.
+
+La baja y la creación de una comunidad se ejecutan en transacciones: si coinciden en el tiempo, nunca queda una comunidad cuyo presidente ha eliminado su cuenta.
 
 
-## Estructura
+## Estructura.
 
 ```
 backend/
@@ -129,7 +143,7 @@ backend/
 └── tests/                     # tests con Vitest, Supertest y mongodb-memory-server
 ```
 
-## Modelos
+## Modelos.
 
 - **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId` (null hasta unirse a una comunidad), `membershipStatus` (`none` | `pending` | `validated`), `deletedAt` (fecha de eliminación de la cuenta o null).
 - **Community:** `name`, `address`, `presidentId`.
