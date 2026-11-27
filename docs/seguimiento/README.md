@@ -1,4 +1,4 @@
-﻿# Seguimiento semanal de VecinHub
+﻿# Seguimiento semanal de Moravía
 
 Este directorio reúne los registros de revisión del proyecto. Se conserva una [copia de la plantilla proporcionada por el profesor](plantilla-profesor.md) y se utiliza un archivo independiente para cada reunión. La semana previa documenta la preparación de la propuesta; los seis sprints de desarrollo siguen el [calendario del proyecto](../recursos.md#2-estimación-y-calendario).
 

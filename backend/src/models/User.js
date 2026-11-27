@@ -12,6 +12,7 @@ export const MEMBERSHIP_STATUS = Object.freeze({
   NONE: 'none',
   PENDING: 'pending',
   VALIDATED: 'validated',
+  REJECTED: 'rejected',
 });
 
 const userSchema = new mongoose.Schema(
@@ -82,5 +83,13 @@ const userSchema = new mongoose.Schema(
 
 // Listados del presidente: residentes de su comunidad filtrados por estado.
 userSchema.index({ communityId: 1, membershipStatus: 1 });
+// Las cuentas sin vivienda (null) quedan fuera del índice.
+userSchema.index(
+  { dwellingId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { dwellingId: { $type: 'objectId' } },
+  },
+);
 
 export const User = mongoose.model('User', userSchema);

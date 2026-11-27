@@ -3,7 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import app from '../src/app.js';
 import { User } from '../src/models/User.js';
 
-const carmen = { name: 'Carmen López', email: 'carmen@example.com', password: 'contraseña-segura' };
+const carmen = { name: 'Carmen López', email: 'carmen@example.com', password: 'contraseña-segura', acceptPolicies: true };
 
 let agent;
 let csrf;
@@ -31,16 +31,34 @@ describe('CSRF', () => {
   it('rechaza peticiones POST sin token CSRF', async () => {
     const res = await request(app).post('/api/auth/login').send(carmen).expect(403);
     expect(res.body.error).toMatch(/CSRF/);
+    expect(res.body.code).toBe('CSRF_INVALID');
   });
 
   it('rechaza un token CSRF que no coincide con la cookie', async () => {
-    await agent.post('/api/auth/login').set('X-CSRF-Token', 'inventado').send(carmen).expect(403);
+    const res = await agent
+      .post('/api/auth/login')
+      .set('X-CSRF-Token', 'inventado')
+      .send(carmen)
+      .expect(403);
+    expect(res.body.code).toBe('CSRF_INVALID');
   });
 });
 
 describe('POST /api/auth/register', () => {
+  it('exige una aceptación explícita de las políticas', async () => {
+    const res = await agent.post('/api/auth/register')
+      .set('X-CSRF-Token', csrf)
+      .send({ ...carmen, acceptPolicies: false })
+      .expect(400);
+    expect(res.body.details).toEqual([expect.objectContaining({ field: 'acceptPolicies' })]);
+    expect(await User.exists({ email: carmen.email })).toBeNull();
+  });
   it('crea la cuenta, inicia sesión y no devuelve la contraseña', async () => {
-    const res = await agent.post('/api/auth/register').set('X-CSRF-Token', csrf).send(carmen).expect(201);
+    const res = await agent
+      .post('/api/auth/register')
+      .set('X-CSRF-Token', csrf)
+      .send(carmen)
+      .expect(201);
 
     expect(res.body.user).toMatchObject({
       name: 'Carmen López',
@@ -73,7 +91,7 @@ describe('POST /api/auth/register', () => {
     const res = await agent
       .post('/api/auth/register')
       .set('X-CSRF-Token', csrf)
-      .send({ name: 'C', email: 'no-es-correo', password: 'corta' })
+      .send({ ...carmen, name: 'C', email: 'no-es-correo', password: 'corta' })
       .expect(400);
     const fields = res.body.details.map((d) => d.field).sort();
     expect(fields).toEqual(['email', 'name', 'password']);
@@ -95,7 +113,10 @@ describe('POST /api/auth/register', () => {
         .set('X-CSRF-Token', csrf)
         .send({ ...carmen, password })
         .expect(400);
-      expect(res.body.details[0]).toMatchObject({ field: 'password', message: expect.stringMatching(/72 bytes/) });
+      expect(res.body.details[0]).toMatchObject({
+        field: 'password',
+        message: expect.stringMatching(/72 bytes/),
+      });
     }
   });
 
@@ -167,7 +188,10 @@ describe('GET /api/auth/me y POST /api/auth/logout', () => {
   });
 
   it('devuelve 401 con un token manipulado', async () => {
-    await request(app).get('/api/auth/me').set('Cookie', 'moravia_token=token.falso.123').expect(401);
+    await request(app)
+      .get('/api/auth/me')
+      .set('Cookie', 'moravia_token=token.falso.123')
+      .expect(401);
   });
 
   it('devuelve el usuario conectado y, tras cerrar sesión, deja de hacerlo', async () => {

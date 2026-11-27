@@ -17,7 +17,7 @@ Para comparar alternativas se consideran tres propuestas de alcance distinto:
 |---|---|---|
 | Préstamo y alquiler de material deportivo entre vecinos | Rocío | Implicaría resolver las condiciones de alquiler, fianzas y posibles daños. |
 | Reservas y gestión de pistas comunitarias de pádel | Pablo | Se orienta a comunidades con pistas y cubre un conjunto más reducido de necesidades. |
-| VecinHub | Equipo | Reúne incidencias y comunicación comunitaria, encaja en MERN y permite priorizar un MVP para seis sprints. |
+| Moravía | Equipo | Reúne incidencias y comunicación comunitaria, encaja en MERN y permite priorizar un MVP para seis sprints. |
 
 La comparación recoge las propuestas facilitadas para el documento. La fecha y el desarrollo de la sesión de selección no están documentados.
 
@@ -49,7 +49,7 @@ Los siguientes perfiles son **arquetipos de diseño**, no personas entrevistadas
 
 ## 3. Investigación exploratoria
 
-Mantuvimos conversaciones informales con personas de nuestro entorno sobre la comunicación en sus comunidades de vecinos y la utilidad de una aplicación como VecinHub. Las aportaciones se recogieron de manera cualitativa, sin un cuestionario estructurado ni un recuento sistemático de participantes o respuestas. Por ello, los siguientes hallazgos resumen temas mencionados y no permiten calcular porcentajes ni generalizar los resultados a todas las comunidades.
+Mantuvimos conversaciones informales con personas de nuestro entorno sobre la comunicación en sus comunidades de vecinos y la utilidad de una aplicación como Moravía. Las aportaciones se recogieron de manera cualitativa, sin un cuestionario estructurado ni un recuento sistemático de participantes o respuestas. Por ello, los siguientes hallazgos resumen temas mencionados y no permiten calcular porcentajes ni generalizar los resultados a todas las comunidades.
 
 Las personas consultadas señalaron estas dificultades:
 
@@ -58,14 +58,14 @@ Las personas consultadas señalaron estas dificultades:
 - **Privacidad del teléfono:** algunas personas prefieren no compartir su número con el resto de los integrantes de un grupo vecinal.
 - **Limitaciones del tablón físico:** los avisos pegados en papel no siempre resultan visibles para todos los residentes.
 
-También se valoró positivamente disponer de una aplicación que facilitara el acceso a la información comunitaria. A partir de estas aportaciones, VecinHub plantea un tablón oficial consultable, separado de las conversaciones, y el acceso de los residentes mediante invitación sin exigir que compartan su número de teléfono con los demás vecinos. El envío de notificaciones por correo figura como mejora posterior al núcleo del MVP; la recepción efectiva de avisos dependerá de las funciones finalmente implementadas.
+También se valoró positivamente disponer de una aplicación que facilitara el acceso a la información comunitaria. A partir de estas aportaciones, Moravía plantea un tablón oficial consultable, separado de las conversaciones, y el acceso de los residentes mediante invitación sin exigir que compartan su número de teléfono con los demás vecinos. El envío de notificaciones por correo figura como mejora posterior al núcleo del MVP; la recepción efectiva de avisos dependerá de las funciones finalmente implementadas.
 
 Estas conversaciones aportan orientación inicial para el diseño. Una prueba de uso posterior permitirá observar si los residentes encuentran los avisos y completan las tareas principales con facilidad.
 ## 4. Análisis de alternativas
 
 Comparación basada en información pública de los proveedores consultada el 6 de noviembre de 2026. Las limitaciones son de encaje con esta propuesta y no equivalen a pruebas independientes de calidad o precio.
 
-| Solución | Fortalezas | Debilidades o carencias para el público objetivo | Oportunidad para VecinHub |
+| Solución | Fortalezas | Debilidades o carencias para el público objetivo | Oportunidad para Moravía |
 |---|---|---|---|
 | [TucomunidApp](https://tucomunidapp.com/) | Incidencias con seguimiento, votación, reservas y recibos. | Se conecta con el despacho del administrador y requiere invitación. | Permitir que el presidente cree la comunidad sin integración con un despacho. |
 | [Plusvecinos PropApp](https://ayuda.plusvecinos.com/portal/es/kb/articles/men%C3%BA-inicio-plusvecinos-propapp) | Permite invitar vecinos, gestionar avisos, incidencias y encuestas; sus [encuestas](https://ayuda.plusvecinos.com/portal/es/kb/articles/encuestas) se describen como anónimas y no vinculantes. | Cubre necesidades muy similares, además de funciones adicionales. | Centrarse en el circuito básico móvil; la ventaja de sencillez requiere validación. |
@@ -75,4 +75,4 @@ Los grupos de mensajería también son una alternativa habitual: facilitan el in
 
 ## 5. Propuesta de valor
 
-VecinHub propone un espacio móvil, creado por el presidente, que agrupa invitaciones por QR físico en el portal, seguimiento de incidencias con chat privado, tablón oficial unidireccional y consultas orientativas con una respuesta por vivienda, sin módulos contables. Su diferenciación es la combinación y el alcance reducido para comunidades pequeñas, no la afirmación de que ninguna otra aplicación ofrezca estas funciones. La facilidad de incorporación y el ahorro de tiempo deberán comprobarse en pruebas con residentes.
+Moravía propone un espacio móvil, creado por el presidente, que agrupa invitaciones por QR físico en el portal, seguimiento de incidencias con chat privado, tablón oficial unidireccional y consultas orientativas con una respuesta por vivienda, sin módulos contables. Su diferenciación es la combinación y el alcance reducido para comunidades pequeñas, no la afirmación de que ninguna otra aplicación ofrezca estas funciones. La facilidad de incorporación y el ahorro de tiempo deberán comprobarse en pruebas con residentes.

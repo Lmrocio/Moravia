@@ -24,7 +24,7 @@ async function signUp(email = 'carmen@example.com') {
   const res = await agent
     .post('/api/auth/register')
     .set('X-CSRF-Token', csrf)
-    .send({ name: 'Carmen López', email, password })
+    .send({ name: 'Carmen López', email, password, acceptPolicies: true })
     .expect(201);
   const sessionCookie = res.headers['set-cookie'].find((c) => c.startsWith('moravia_token='));
   return { agent, csrf, user: res.body.user, sessionCookie: sessionCookie.split(';')[0] };
@@ -196,7 +196,12 @@ describe('DELETE /api/users/me', () => {
     const res = await agent
       .post('/api/auth/register')
       .set('X-CSRF-Token', body.csrfToken)
-      .send({ name: 'Intruso', email: 'eliminado-algo@moravia.invalid', password })
+      .send({
+        name: 'Intruso',
+        email: 'eliminado-algo@moravia.invalid',
+        password,
+        acceptPolicies: true,
+      })
       .expect(400);
     expect(res.body.details[0].field).toBe('email');
   });
