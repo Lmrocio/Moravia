@@ -1,6 +1,6 @@
 # Guía de buenas prácticas de trabajo y gestión del proyecto
 
-**Proyecto:** VecinHub
+**Proyecto:** Moravía
 **Módulo:** Proyecto Integrado (DAW)
 **Equipo:** Rocío Luque Montes y Pablo Sanz Aznar
 
@@ -76,7 +76,7 @@ Las responsabilidades de cada sprint se podrán ajustar según el avance real.
 
 ## 8. Tiempo y presupuesto
 
-Registraremos en Toggl Track cada sesión de trabajo con el proyecto VecinHub y el número de la issue. La planificación prevé unas seis horas por persona y sprint, 12 horas-persona por semana y 72 en total, incluidas ocho horas de reserva.
+Registraremos en Toggl Track cada sesión de trabajo con el proyecto Moravía y el número de la issue. La planificación prevé unas seis horas por persona y sprint, 12 horas-persona por semana y 72 en total, incluidas ocho horas de reserva.
 
 En cada revisión compararemos el tiempo dedicado con lo previsto y recogeremos las diferencias en el registro semanal. También revisaremos el consumo y los posibles costes de los servicios descritos en [recursos y organización](recursos.md#4-servicios-externos-y-costes), y anotaremos cualquier cambio que afecte al presupuesto.
 

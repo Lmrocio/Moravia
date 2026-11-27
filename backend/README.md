@@ -76,17 +76,19 @@ Flujo desde el frontend (con `fetch` o Axios, siempre con `credentials: 'include
 2. En cada `POST`/`PUT`/`PATCH`/`DELETE`: enviar la cabecera `X-CSRF-Token: <csrfToken>`.
 3. Para saber si hay sesión: `GET /api/auth/me` (`401` = no hay sesión).
 
-Los errores siempre tienen la forma `{ "error": "mensaje", "details": [{ "field", "message" }] }` (`details` solo en errores de validación).
+Los errores contienen `{ "error": "mensaje" }` y pueden incluir `details` en errores de validación. Si el token CSRF falta o no es válido, la respuesta es `403` e incluye `"code": "CSRF_INVALID"`; el cliente puede renovar el token y reintentar la petición.
 
 
 ## Comunidades e invitaciones.
 
-Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
+Todas estas rutas requieren la cabecera `X-CSRF-Token`. La validación de una invitación es pública y el resto requiere una sesión.
 
 | Método | Ruta | Quién | Descripción |
 |---|---|---|---|
 | `POST` | `/api/communities` | Usuario sin comunidad | Crea la comunidad y sus viviendas; el creador pasa a ser presidente. `201`, `400`, `401`, `409`. |
 | `POST` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Genera un token de invitación válido 48 h. `201`, `401`, `403`, `404`. |
+| `DELETE` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Revoca la invitación vigente. `204`, `401`, `403`, `404`. |
+| `POST` | `/api/invitations/validate` | Público | Comprueba un token mediante `{ "token": "..." }`. `200`, `400`, `404`. Requiere CSRF. |
 
 **Crear una comunidad.** El servidor genera las viviendas a partir de la estructura del edificio:
 
@@ -104,6 +106,7 @@ Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 
 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
 
+La validación comprueba `expiresAt` además de buscar el hash: la eliminación por TTL puede retrasarse. El endpoint de validación solo comprueba el token; el alta de vecinos deberá comprobarlo de nuevo al utilizarlo e implementarse por separado.
 
 ## Datos personales (RGPD).
 
