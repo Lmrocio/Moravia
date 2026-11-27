@@ -18,8 +18,8 @@ const pages = {
         'Con una sesión iniciada, puedes descargar tus datos en JSON y solicitar la baja de tu cuenta mediante la API de Moravía. También puedes ejercer los derechos de rectificación, limitación, oposición y portabilidad cuando correspondan, o presentar una reclamación ante la Agencia Española de Protección de Datos.',
       ],
       [
-        'Versión de prueba',
-        'Si estás probando Moravía, usa nombres, correos y direcciones ficticios.',
+        'Demo académica',
+        'Moravía es una demostración para una entrega de clase. Usa nombres, correos y direcciones ficticios y una contraseña creada para la prueba. Los datos que envíes en la demo con servidor se guardan en el entorno de pruebas.',
       ],
     ],
   },
@@ -43,6 +43,10 @@ const pages = {
   '/legal/terminos': {
     title: 'Términos de uso',
     sections: [
+      [
+        'Uso de la demo',
+        'Este proyecto se usa para una entrega de clase. Crea comunidades y cuentas ficticias para probar el flujo de invitación.',
+      ],
       [
         'Acceso a la comunidad',
         'Si te registras con una invitación, el presidente revisará tu solicitud antes de darte acceso a la comunidad. Solicita solo la vivienda a la que perteneces.',

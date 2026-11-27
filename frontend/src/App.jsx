@@ -500,12 +500,12 @@ export default function App() {
           </div>
         )}
       </header>
-      {DEMO && (
-        <div className="demo-banner" role="status">
-          <strong>Modo demostración</strong> · Datos ficticios, sin conexión al servidor. El QR es
-          de prueba y no crea invitaciones reales.
-        </div>
-      )}
+      <p className="demo-banner">
+        <strong>Demo académica.</strong>{' '}
+        {DEMO
+          ? 'El QR de prueba solo funciona en esta pestaña.'
+          : 'Usa solo nombres, correos y direcciones ficticios y una contraseña de prueba.'}
+      </p>
       <main className="container">
         {legalPage ? (
           <LegalPage page={legalPage} />
