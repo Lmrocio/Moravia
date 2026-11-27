@@ -88,3 +88,53 @@ it('muestra el rechazo del servidor al abrir una invitación caducada o revocada
   ).toBeTruthy();
   expect(screen.getByText(/Puede haber caducado o haber sido revocada/)).toBeTruthy();
 });
+
+it('renueva el token y reintenta si el servidor devuelve CSRF_INVALID, aunque cambie el mensaje', async () => {
+  window.history.replaceState({}, '', '/unirse?token=abcdefghijk');
+  const attempts = [];
+  const fetchMock = vi.fn(async (url, options = {}) => {
+    if (url.endsWith('/api/auth/csrf')) {
+      return { ok: true, status: 200, json: async () => ({ csrfToken: 'token-renovado' }) };
+    }
+    attempts.push(options);
+    if (attempts.length === 1) {
+      return {
+        ok: false,
+        status: 403,
+        json: async () => ({ code: 'CSRF_INVALID', error: 'Otro mensaje' }),
+      };
+    }
+    return { ok: true, status: 200, json: async () => ({ valid: true }) };
+  });
+  vi.stubGlobal('fetch', fetchMock);
+
+  render(<App />);
+
+  await screen.findByRole('heading', { name: 'Tu invitación es válida' });
+  expect(attempts).toHaveLength(2);
+  expect(attempts[1].headers['X-CSRF-Token']).toBe('token-renovado');
+  expect(attempts[1].body).toBe(attempts[0].body);
+});
+
+it.each([
+  ['CSRF_INVALID', 2],
+  ['OTRO_ERROR', 1],
+])('limita el reintento para el código %s', async (code, expectedAttempts) => {
+  window.history.replaceState({}, '', '/unirse?token=abcdefghijk');
+  let attempts = 0;
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url) => {
+      if (url.endsWith('/api/auth/csrf')) {
+        return { ok: true, status: 200, json: async () => ({ csrfToken: 'token' }) };
+      }
+      attempts += 1;
+      return { ok: false, status: 403, json: async () => ({ code, error: 'Error' }) };
+    }),
+  );
+
+  render(<App />);
+
+  await screen.findByRole('heading', { name: 'No hemos podido comprobar la invitación' });
+  expect(attempts).toBe(expectedAttempts);
+});

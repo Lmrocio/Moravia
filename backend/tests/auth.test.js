@@ -31,16 +31,26 @@ describe('CSRF', () => {
   it('rechaza peticiones POST sin token CSRF', async () => {
     const res = await request(app).post('/api/auth/login').send(carmen).expect(403);
     expect(res.body.error).toMatch(/CSRF/);
+    expect(res.body.code).toBe('CSRF_INVALID');
   });
 
   it('rechaza un token CSRF que no coincide con la cookie', async () => {
-    await agent.post('/api/auth/login').set('X-CSRF-Token', 'inventado').send(carmen).expect(403);
+    const res = await agent
+      .post('/api/auth/login')
+      .set('X-CSRF-Token', 'inventado')
+      .send(carmen)
+      .expect(403);
+    expect(res.body.code).toBe('CSRF_INVALID');
   });
 });
 
 describe('POST /api/auth/register', () => {
   it('crea la cuenta, inicia sesión y no devuelve la contraseña', async () => {
-    const res = await agent.post('/api/auth/register').set('X-CSRF-Token', csrf).send(carmen).expect(201);
+    const res = await agent
+      .post('/api/auth/register')
+      .set('X-CSRF-Token', csrf)
+      .send(carmen)
+      .expect(201);
 
     expect(res.body.user).toMatchObject({
       name: 'Carmen López',
@@ -95,7 +105,10 @@ describe('POST /api/auth/register', () => {
         .set('X-CSRF-Token', csrf)
         .send({ ...carmen, password })
         .expect(400);
-      expect(res.body.details[0]).toMatchObject({ field: 'password', message: expect.stringMatching(/72 bytes/) });
+      expect(res.body.details[0]).toMatchObject({
+        field: 'password',
+        message: expect.stringMatching(/72 bytes/),
+      });
     }
   });
 
@@ -167,7 +180,10 @@ describe('GET /api/auth/me y POST /api/auth/logout', () => {
   });
 
   it('devuelve 401 con un token manipulado', async () => {
-    await request(app).get('/api/auth/me').set('Cookie', 'moravia_token=token.falso.123').expect(401);
+    await request(app)
+      .get('/api/auth/me')
+      .set('Cookie', 'moravia_token=token.falso.123')
+      .expect(401);
   });
 
   it('devuelve el usuario conectado y, tras cerrar sesión, deja de hacerlo', async () => {

@@ -38,12 +38,7 @@ async function api(path, { method = 'GET', body, csrfRetry = true } = {}) {
   });
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    if (
-      method !== 'GET' &&
-      csrfRetry &&
-      response.status === 403 &&
-      data.error === 'Token CSRF ausente o no válido'
-    ) {
+    if (method !== 'GET' && csrfRetry && response.status === 403 && data.code === 'CSRF_INVALID') {
       csrfPromise = null;
       return api(path, { method, body, csrfRetry: false });
     }
