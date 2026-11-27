@@ -264,6 +264,19 @@ describe('Validación y revocación de invitaciones', () => {
     return { agent, response };
   }
 
+  it('identifica el correo duplicado y deja disponible la vivienda', async () => {
+    const { token, validate } = await setupInvitation();
+    const email = 'existente@example.com';
+    await signUp(email);
+    const dwelling = (await validate(token).expect(200)).body.dwellings[0];
+
+    const { response } = await registerViaInvitation(token, dwelling.id, email);
+
+    expect(response.status).toBe(409);
+    expect(response.body.error).toBe('Ya existe una cuenta con ese correo');
+    expect((await validate(token).expect(200)).body.dwellings).toContainEqual(dwelling);
+  });
+
   it('reserva la vivienda al solicitarla, la libera al denegar y conserva otra al aprobar', async () => {
     const { president, communityId, token, validate } = await setupInvitation();
     const available = (await validate(token).expect(200)).body.dwellings;

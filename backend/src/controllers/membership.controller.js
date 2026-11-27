@@ -44,7 +44,6 @@ export async function validateInvitation(req, res) {
 export async function registerResident(req, res) {
   const { token, dwellingId, name, email, password } = req.body;
   const passwordHash = await hashPassword(password);
-  await User.init();
   let user;
 
   try {
@@ -81,6 +80,9 @@ export async function registerResident(req, res) {
   } catch (error) {
     if (error.code === 11000 && error.keyPattern?.dwellingId) {
       throw new AppError(409, 'La vivienda ya no está disponible. Vuelve a cargar la invitación.');
+    }
+    if (error.code === 11000 && error.keyPattern?.email) {
+      throw new AppError(409, 'Ya existe una cuenta con ese correo');
     }
     throw error;
   }
