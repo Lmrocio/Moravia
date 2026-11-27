@@ -1,5 +1,9 @@
 # Recursos y organización
 
+![Trabajo en equipo](assets/equipo.svg) [![Planificación](assets/planificacion.svg)](#2-estimación-y-calendario)
+
+Reparto del trabajo, calendario y recursos técnicos de la entrega.
+
 ## Índice
 
 - [1. Equipo y responsabilidades](#1-equipo-y-responsabilidades)

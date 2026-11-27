@@ -1,5 +1,7 @@
 # Guía de buenas prácticas de trabajo y gestión del proyecto
 
+![Trabajo en equipo](assets/equipo.svg) [![Planificación](assets/planificacion.svg)](#6-revisión-y-planificación-semanal)
+
 **Proyecto:** Moravía
 **Módulo:** Proyecto Integrado (DAW)
 **Equipo:** Rocío Luque Montes y Pablo Sanz Aznar

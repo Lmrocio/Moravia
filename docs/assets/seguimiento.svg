@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="86" height="22" viewBox="0 0 86 22" role="img" aria-label="Seguimiento">
-  <rect width="86" height="22" fill="#4d4657"/>
-  <text x="43" y="15" fill="#fff" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">Seguimiento</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="22" viewBox="0 0 96 22" role="img" aria-labelledby="label">
+  <title id="label">Seguimiento</title>
+  <rect width="96" height="22" rx="3" fill="#4d4657"/>
+  <text x="48" y="15" fill="#fff" font-family="Verdana, Geneva, sans-serif" font-size="11" text-anchor="middle">Seguimiento</text>
 </svg>

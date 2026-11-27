@@ -1,5 +1,9 @@
 # Análisis de competencia
 
+![Investigación](assets/investigacion.svg)
+
+Comparación de productos y proveedores consultados para definir la propuesta de Moravía.
+
 ## Índice
 
 - [Objetivo y método](#objetivo-y-método)

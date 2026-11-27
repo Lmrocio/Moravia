@@ -1,5 +1,7 @@
 # Moravía — Backend
 
+![Backend](../docs/assets/backend.svg) [![Seguridad](../docs/assets/seguridad.svg)](#autenticación) [![Pruebas](../docs/assets/pruebas.svg)](#scripts)
+
 API REST de Moravía con Node.js, Express 5 y MongoDB (Mongoose 8).
 
 ## Índice

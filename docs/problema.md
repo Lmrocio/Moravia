@@ -1,5 +1,9 @@
 # Problema y propuesta de valor
 
+![Propuesta](assets/propuesta.svg) [![Investigación](assets/investigacion.svg)](#3-investigación-exploratoria)
+
+De la comunicación diaria en las comunidades a la propuesta de Moravía.
+
 ## Índice
 
 - [Selección de la propuesta](#selección-de-la-propuesta)

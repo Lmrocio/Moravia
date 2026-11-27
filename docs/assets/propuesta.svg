@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="76" height="22" viewBox="0 0 76 22" role="img" aria-label="Propuesta">
-  <rect width="76" height="22" fill="#68169e"/>
-  <text x="38" y="15" fill="#fff" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">Propuesta</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="78" height="22" viewBox="0 0 78 22" role="img" aria-labelledby="label">
+  <title id="label">Propuesta</title>
+  <rect width="78" height="22" rx="3" fill="#68169e"/>
+  <text x="39" y="15" fill="#fff" font-family="Verdana, Geneva, sans-serif" font-size="11" text-anchor="middle">Propuesta</text>
 </svg>

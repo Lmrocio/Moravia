@@ -1,6 +1,12 @@
 # Moravía
 
+![Identidad de Moravía, con tres edificios del barrio](docs/assets/moravia.svg)
+
 Aplicación web para comunidades de vecinos autogestionadas. Proyecto de Desarrollo de Aplicaciones Web.
+
+[![Propuesta](docs/assets/propuesta.svg)](#documentación-de-la-propuesta)
+[![Backend](docs/assets/backend.svg)](backend/README.md)
+[![Seguimiento](docs/assets/seguimiento.svg)](docs/seguimiento/README.md)
 
 ## Índice
 
@@ -53,7 +59,7 @@ Las versiones de referencia, los límites de los servicios y las decisiones téc
 | [Financiación y capital de trabajo](docs/financiacion.md) | 2g | Costes de producción, caja para seis meses y opciones de financiación. |
 | [Análisis de competencia](docs/analisis-competencia.md) | Complemento de 2a | Comparación de productos, empresas y condiciones consultadas. |
 
-Consulta también el [seguimiento semanal](docs/seguimiento/README.md), la [guía de trabajo](docs/buenas-practicas.md) y la [guía de estilo documental](docs/estilo-documental.md).
+Consulta también el [seguimiento semanal](docs/seguimiento/README.md) y la [guía de trabajo](docs/buenas-practicas.md).
 
 ## Equipo y planificación
 

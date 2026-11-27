@@ -1,5 +1,9 @@
 # Objetivos y alcance
 
+![Requisitos](assets/requisitos.svg) ![Planificación](assets/planificacion.svg)
+
+Objetivos que usaremos para evaluar el prototipo, funciones previstas y límites del MVP.
+
 ## Índice
 
 - [Objetivo general](#objetivo-general)

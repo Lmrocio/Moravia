@@ -1,5 +1,9 @@
 # Viabilidad técnica
 
+[![Arquitectura](assets/arquitectura.svg)](#2-arquitectura-y-decisiones-técnicas) [![Requisitos](assets/requisitos.svg)](#1-requisitos-funcionales-y-prioridades) [![Base de datos](assets/datos.svg)](#3-modelo-preliminar-de-mongodb)
+
+Requisitos, arquitectura y decisiones del prototipo, con el modelo de datos previsto para las próximas funciones.
+
 ## Índice
 
 - [1. Requisitos funcionales y prioridades](#1-requisitos-funcionales-y-prioridades)
@@ -31,14 +35,31 @@ Una invitación demuestra posesión del enlace, no residencia: la validación de
 
 ## 2. Arquitectura y decisiones técnicas
 
+La figura 1 sitúa la interfaz, la API y la base de datos dentro de la arquitectura prevista. Las fotografías y el envío de correo forman parte del diseño posterior.
+
 ```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#faf5fe"
+    primaryTextColor: "#340851"
+    primaryBorderColor: "#68169e"
+    lineColor: "#81768a"
+    edgeLabelBackground: "#faf9fc"
+    fontFamily: "system-ui, sans-serif"
+---
 flowchart LR
   U[Presidente o residente] -->|HTTPS| R[React: interfaz móvil]
   R -->|HTTPS / JSON| E[Node.js + Express: API REST]
   E -->|Mongoose| M[(MongoDB Atlas)]
   E -->|Subida autenticada| C[Cloudinary: fotografías]
   E -.->|SMTP: mejora posterior| S[Proveedor de correo]
+  classDef prevista fill:#fff5ed,stroke:#d36a18,color:#352f3d,stroke-dasharray:4 3
+  class C,S prevista
 ```
+
+*Figura 1. Arquitectura de Moravía. El contorno discontinuo identifica los servicios previstos.*
 
 Usamos React y Vite para el cliente. En las ramas del panel, las vistas se seleccionan según la URL y el estado de sesión. La interfaz se adapta con CSS y usa `fetch` para llamar a la API.
 
@@ -51,6 +72,16 @@ Los mensajes se recuperan al abrir o actualizar la incidencia; no se promete ent
 El diagrama reúne las colecciones actuales y las que prevemos incorporar para avisos y consultas.
 
 ```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#faf5fe"
+    primaryTextColor: "#340851"
+    primaryBorderColor: "#68169e"
+    lineColor: "#81768a"
+    fontFamily: "system-ui, sans-serif"
+---
 erDiagram
     COMMUNITY ||--o{ DWELLING : contiene
     COMMUNITY ||--o{ USER : agrupa
@@ -64,6 +95,8 @@ erDiagram
     POLL ||--o{ PARTICIPATION : controla
     POLL ||--o{ BALLOT : recoge
 ```
+
+*Figura 2. Relaciones del modelo preliminar. La tabla recoge los campos y las reglas de cada colección.*
 
 | Colección | Campos principales y tipos | Reglas |
 | --- | --- | --- |
