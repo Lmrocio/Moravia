@@ -1,6 +1,16 @@
 # Financiación y capital de trabajo de Moravía
 
+![Financiación](assets/financiacion.svg)
+
 Queremos probar Moravía con hasta diez comunidades pequeñas antes de depender de las cuotas. Calculamos primero seis meses sin ingresos y después cuánto tendríamos que facturar para sostener la dedicación de los dos socios a tiempo parcial. El [presupuesto de la demo académica](recursos.md#4-servicios-externos-y-costes) corresponde a otro entorno.
+
+## Índice
+
+- [1. Coste de la infraestructura](#1-coste-de-la-infraestructura)
+- [2. Caja para seis meses sin ingresos](#2-caja-para-seis-meses-sin-ingresos)
+- [3. Servicio de pago con dos perfiles júnior](#3-servicio-de-pago-con-dos-perfiles-júnior)
+- [4. Vías de financiación](#4-vías-de-financiación)
+- [5. Cómo conseguiríamos y usaríamos el dinero](#5-cómo-conseguiríamos-y-usaríamos-el-dinero)
 
 ## 1. Coste de la infraestructura
 

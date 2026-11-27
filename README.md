@@ -1,6 +1,12 @@
-# VecinHub
+# Moravía
 
-**Plataforma web para la gestión cotidiana de comunidades de vecinos autogestionadas**
+![Identidad de Moravía, con tres edificios del barrio](docs/assets/moravia.svg)
+
+Aplicación web para comunidades de vecinos autogestionadas. Proyecto de Desarrollo de Aplicaciones Web.
+
+[![Propuesta](docs/assets/propuesta.svg)](#documentación-de-la-propuesta)
+[![Backend](docs/assets/backend.svg)](backend/README.md)
+[![Seguimiento](docs/assets/seguimiento.svg)](docs/seguimiento/README.md)
 
 ## Índice
 
@@ -13,9 +19,9 @@
 
 ## Descripción
 
-VecinHub es una propuesta de aplicación web *mobile-first* dirigida a comunidades de vecinos autogestionadas de entre 6 y 40 viviendas. Surge de la necesidad de organizar los avisos y las incidencias cuando la información se dispersa entre grupos de mensajería, conversaciones y carteles. Las conversaciones exploratorias mantenidas con personas de nuestro entorno también señalaron que algunos residentes no pertenecen al grupo de la comunidad o prefieren no compartir su número de teléfono.
+Estamos desarrollando Moravía para comunidades autogestionadas de entre 6 y 40 viviendas. Queremos que sea más fácil encontrar avisos y seguir incidencias desde el móvil. Al hablar con personas de nuestro entorno, vimos que algunos vecinos no están en el grupo de la comunidad o prefieren no compartir su número de teléfono.
 
-La aplicación reúne en un mismo espacio las incidencias, los avisos oficiales y las consultas vecinales. El presidente puede crear la comunidad e invitar a los residentes mediante un enlace o código QR, sin depender de un módulo contable. El desarrollo se plantea con el stack MERN: MongoDB, Express, React y Node.js.
+Queremos reunir las incidencias, los avisos y las consultas en un mismo sitio. Diseñamos el alta para que el presidente pueda crear la comunidad e invitar a los vecinos mediante un enlace o un código QR. Usamos MongoDB, Express, React y Node.js.
 
 ## Alcance del proyecto
 
@@ -26,13 +32,16 @@ El producto mínimo viable (MVP) comprende:
 - **Avisos:** tablón de lectura para los miembros, con publicaciones realizadas por el presidente.
 - **Consultas:** propuestas orientativas con un máximo de una respuesta por vivienda validada y resultados agregados tras el cierre.
 
+> [!NOTE]
+> Esta lista describe el alcance previsto. En la rama de integración ya está disponible la API de autenticación, comunidades, viviendas, invitaciones y gestión de datos personales. El panel, el alta por QR y las vistas legales se desarrollan en sus propias ramas. La entrega se plantea como una demo académica con datos ficticios.
+
 Las consultas no sustituyen los acuerdos formales de la comunidad. La separación entre participación y respuestas reduce la vinculación directa del voto, pero no garantiza el anonimato absoluto. El MVP excluye contabilidad, pagos, aplicaciones móviles nativas y voto ponderado. El detalle de prioridades y exclusiones se encuentra en [objetivos y alcance](docs/objetivos-alcance.md).
 
 ## Tecnologías
 
 | Capa | Tecnología prevista | Función |
-|---|---|---|
-| Interfaz | React y Tailwind CSS | Componentes y diseño adaptable a dispositivos móviles. |
+| --- | --- | --- |
+| Interfaz | React y Vite | Componentes y entorno de desarrollo. Las ramas de interfaz usan CSS para adaptar las vistas a móviles. |
 | Servidor | Node.js y Express | API REST, autenticación y control de acceso. |
 | Datos | MongoDB y Mongoose | Almacenamiento y modelado de los datos de la aplicación. |
 | Servicios | Vercel, Render, MongoDB Atlas y Cloudinary | Despliegue previsto, base de datos y almacenamiento de imágenes. |
@@ -42,22 +51,24 @@ Las versiones de referencia, los límites de los servicios y las decisiones téc
 ## Documentación de la propuesta
 
 | Documento | Criterio | Contenido |
-|---|---|---|
+| --- | --- | --- |
 | [Problema y propuesta de valor](docs/problema.md) | 2a | Necesidad identificada, usuarios, investigación exploratoria y análisis de alternativas. |
 | [Viabilidad técnica](docs/viabilidad-tecnica.md) | 2b | Requisitos priorizados, arquitectura, modelo de datos, capacidades y riesgos. |
 | [Objetivos y alcance](docs/objetivos-alcance.md) | 2d | Objetivos SMART, MVP, exclusiones y criterios de éxito. |
 | [Recursos y organización](docs/recursos.md) | 2e | Responsabilidades, calendario, herramientas y servicios. |
 | [Financiación y capital de trabajo](docs/financiacion.md) | 2g | Costes de producción, caja para seis meses y opciones de financiación. |
-| [Seguimiento semanal](docs/seguimiento/README.md) | Seguimiento | Plantilla del profesor y revisiones de la semana previa y los seis sprints. |
+| [Análisis de competencia](docs/analisis-competencia.md) | Complemento de 2a | Comparación de productos, empresas y condiciones consultadas. |
+
+Consulta también el [seguimiento semanal](docs/seguimiento/README.md) y la [guía de trabajo](docs/buenas-practicas.md).
 
 ## Equipo y planificación
 
 | Integrante | Responsabilidades principales |
-|---|---|
+| --- | --- |
 | **Rocío Luque Montes** | Diseño de interfaz y experiencia de usuario, frontend y pruebas de interfaz. |
 | **Pablo Sanz Aznar** | Backend, base de datos, integraciones y despliegue. |
 
-Ambos integrantes colaboran en la integración, las pruebas, la revisión de cambios y la documentación. El equipo de dos personas cuenta con autorización excepcional. La planificación comprende seis sprints semanales entre el 9 de noviembre y el 18 de diciembre de 2026, con 72 horas-persona comprometidas y una revisión cada viernes.
+Los dos colaboramos en la integración, las pruebas, la revisión de cambios y la documentación. Contamos con autorización para trabajar en pareja. Hemos previsto seis sprints semanales del 9 de noviembre al 18 de diciembre de 2026, con 72 horas-persona y una revisión cada viernes.
 
 ## Consulta del repositorio
 
@@ -77,4 +88,4 @@ Para trabajar con el frontend usamos `npm run dev --prefix frontend`; para compr
 
 Los documentos pueden abrirse directamente desde la tabla anterior en GitHub. Para consultarlos en local, clona el repositorio con su URL desde el botón **Code** de GitHub y abre la carpeta en un editor compatible con Markdown, como VS Code.
 
-La carpeta `docs/` contiene la propuesta. El repositorio se encuentra en fase de planificación y todavía no incluye una aplicación ejecutable; el calendario de desarrollo y el flujo de trabajo previsto están descritos en [recursos y organización](docs/recursos.md).
+En `docs/` recogemos la propuesta y el [seguimiento semanal](docs/seguimiento/README.md). En [recursos y organización](docs/recursos.md) explicamos el calendario y cómo nos repartimos el trabajo.

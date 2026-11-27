@@ -1,10 +1,24 @@
 # Guía de buenas prácticas de trabajo y gestión del proyecto
 
-**Proyecto:** VecinHub
+![Trabajo en equipo](assets/equipo.svg) [![Planificación](assets/planificacion.svg)](#6-revisión-y-planificación-semanal)
+
+**Proyecto:** Moravía
 **Módulo:** Proyecto Integrado (DAW)
 **Equipo:** Rocío Luque Montes y Pablo Sanz Aznar
 
 En esta guía recogemos cómo vamos a organizarnos durante los seis sprints: cómo repartimos las tareas, registramos el tiempo, resolvemos bloqueos y revisamos el trabajo. Los acuerdos se pueden ajustar en las reuniones semanales si vemos que necesitamos cambiar algo.
+
+## Índice
+
+- [1. Flujo de trabajo diario](#1-flujo-de-trabajo-diario)
+- [2. Organización de tareas e incidencias](#2-organización-de-tareas-e-incidencias)
+- [3. Ramas y commits](#3-ramas-y-commits)
+- [4. Revisión del trabajo](#4-revisión-del-trabajo)
+- [5. Comunicación y bloqueos](#5-comunicación-y-bloqueos)
+- [6. Revisión y planificación semanal](#6-revisión-y-planificación-semanal)
+- [7. Roles durante los sprints](#7-roles-durante-los-sprints)
+- [8. Tiempo y presupuesto](#8-tiempo-y-presupuesto)
+- [9. Información y acceso a herramientas](#9-información-y-acceso-a-herramientas)
 
 ## 1. Flujo de trabajo diario
 
@@ -15,7 +29,7 @@ Cada tarea seguirá estos pasos:
 3. Iniciamos el temporizador de Toggl Track con el número y el nombre de la tarea, por ejemplo `#7 Análisis de competencia`.
 4. Trabajamos en la tarea y guardamos avances mediante commits con mensajes claros.
 5. Al hacer una pausa o terminar, detenemos el temporizador y anotamos en la issue lo realizado, los bloqueos y el siguiente paso cuando sea necesario.
-6. Subimos la rama y abrimos una pull request hacia `develop`, solicitando la revisión de la otra persona. Cuando se revise, se compruebe y se integre, actualizamos la issue y su estado en el tablero.
+6. Subimos la rama, abrimos la PR y pasamos la issue a `In Review` cuando está lista para que la revise la otra persona. Al integrar los cambios, actualizamos la issue y la movemos a `Done` si está completa.
 
 ## 2. Organización de tareas e incidencias
 
@@ -45,7 +59,7 @@ La persona que revisa leerá los cambios, comprobará que se entiende lo realiza
 
 ## 5. Comunicación y bloqueos
 
-Cada día que trabajemos en el proyecto nos enviaremos un mensaje por WhatsApp con lo que hemos hecho, lo que vamos a hacer y los bloqueos que tengamos. Dejaremos las decisiones que afecten a una tarea en su issue para que queden registradas.
+Usamos WhatsApp para contarnos cómo vamos, qué haremos después y si necesitamos ayuda. Dejamos las decisiones de cada tarea en su issue y actualizamos el tablero durante el sprint.
 
 Si llevamos unos 45 minutos bloqueados sin encontrar una salida, avisaremos por WhatsApp y, cuando sea posible, nos conectaremos por Discord para revisar el problema juntos compartiendo pantalla. Si no podemos resolverlo en ese momento, anotaremos el bloqueo y el siguiente paso en la issue.
 
@@ -64,7 +78,7 @@ Los viernes revisaremos juntos el trabajo del sprint, preferiblemente en clase:
 Alternaremos las funciones de Product Owner y Scrum Master. El Product Owner se encargará de ordenar las prioridades y comprobar que el resultado responde al objetivo del producto. El Scrum Master facilitará la reunión, revisará que el tablero esté actualizado y recordará el registro de horas. Seguiremos tomando juntos las decisiones importantes y revisando el trabajo de la otra persona.
 
 | Sprint | Product Owner | Scrum Master | Atención especial prevista |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | Pablo | Rocío | Revisar el backlog y preparar las herramientas de trabajo. |
 | 2 | Rocío | Pablo | Revisar el acceso y la incorporación a la comunidad. |
 | 3 | Pablo | Rocío | Seguir el avance de incidencias y el uso de recursos. |
@@ -76,7 +90,7 @@ Las responsabilidades de cada sprint se podrán ajustar según el avance real.
 
 ## 8. Tiempo y presupuesto
 
-Registraremos en Toggl Track cada sesión de trabajo con el proyecto VecinHub y el número de la issue. La planificación prevé unas seis horas por persona y sprint, 12 horas-persona por semana y 72 en total, incluidas ocho horas de reserva.
+Registraremos en Toggl Track cada sesión de trabajo en el proyecto Moravía y el número de la issue. La planificación prevé unas seis horas por persona y sprint, 12 horas-persona por semana y 72 en total, incluidas ocho horas de reserva.
 
 En cada revisión compararemos el tiempo dedicado con lo previsto y recogeremos las diferencias en el registro semanal. También revisaremos el consumo y los posibles costes de los servicios descritos en [recursos y organización](recursos.md#4-servicios-externos-y-costes), y anotaremos cualquier cambio que afecte al presupuesto.
 
