@@ -155,13 +155,17 @@ it('renueva el token y reintenta si el servidor devuelve CSRF_INVALID, aunque ca
         json: async () => ({ code: 'CSRF_INVALID', error: 'Otro mensaje' }),
       };
     }
-    return { ok: true, status: 200, json: async () => ({ valid: true }) };
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ valid: true, community: { name: 'Los Olivos' }, dwellings: [] }),
+    };
   });
   vi.stubGlobal('fetch', fetchMock);
 
   render(<App />);
 
-  await screen.findByRole('heading', { name: 'Tu invitación es válida' });
+  await screen.findByRole('heading', { name: 'Únete a Los Olivos' });
   expect(attempts).toHaveLength(2);
   expect(attempts[1].headers['X-CSRF-Token']).toBe('token-renovado');
   expect(attempts[1].body).toBe(attempts[0].body);
