@@ -71,7 +71,7 @@ Flujo desde el frontend (con `fetch` o Axios, siempre con `credentials: 'include
 2. En cada `POST`/`PUT`/`PATCH`/`DELETE`: enviar la cabecera `X-CSRF-Token: <csrfToken>`.
 3. Para saber si hay sesión: `GET /api/auth/me` (`401` = no hay sesión).
 
-Los errores siempre tienen la forma `{ "error": "mensaje", "details": [{ "field", "message" }] }` (`details` solo en errores de validación).
+Los errores contienen `{ "error": "mensaje" }` y pueden incluir `details` en errores de validación. Si el token CSRF falta o no es válido, la respuesta es `403` e incluye `"code": "CSRF_INVALID"`; el cliente puede renovar el token y reintentar la petición.
 
 ## Comunidades e invitaciones
 

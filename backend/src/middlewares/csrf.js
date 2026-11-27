@@ -27,7 +27,7 @@ export function csrfProtection(req, res, next) {
   const headerToken = req.get(CSRF_HEADER);
 
   if (!cookieToken || !headerToken || !safeEqual(cookieToken, headerToken)) {
-    return next(new AppError(403, 'Token CSRF ausente o no válido'));
+    return next(new AppError(403, 'Token CSRF ausente o no válido', undefined, 'CSRF_INVALID'));
   }
 
   next();
