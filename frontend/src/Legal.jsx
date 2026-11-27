@@ -15,7 +15,7 @@ const pages = {
       ],
       [
         'Derechos sobre tus datos',
-        'Puedes solicitar acceso, rectificación o supresión de tus datos y, cuando corresponda, ejercer los derechos de limitación, oposición y portabilidad. También puedes presentar una reclamación ante la Agencia Española de Protección de Datos.',
+        'Con una sesión iniciada, puedes descargar tus datos en JSON y solicitar la baja de tu cuenta mediante la API de Moravía. También puedes ejercer los derechos de rectificación, limitación, oposición y portabilidad cuando correspondan, o presentar una reclamación ante la Agencia Española de Protección de Datos.',
       ],
       [
         'Versión de prueba',

@@ -8,6 +8,10 @@ export const PASSWORD_MAX_BYTES = 72;
 const fitsInBcrypt = (value) => Buffer.byteLength(value, 'utf8') <= PASSWORD_MAX_BYTES;
 const tooLongMessage = `La contraseña es demasiado larga (máximo ${PASSWORD_MAX_BYTES} bytes; las tildes, la ñ y los emojis ocupan más de uno)`;
 
+// Dominio reservado para los correos de las cuentas eliminadas (RGPD). ".invalid" es un
+// dominio que no existe por norma (RFC 2606), y no se permite registrarse con él.
+export const DELETED_EMAIL_DOMAIN = 'moravia.invalid';
+
 const email = z
   .string({ error: 'El correo es obligatorio' })
   .trim()
@@ -21,7 +25,9 @@ export const registerSchema = z.object({
     .trim()
     .min(2, 'El nombre debe tener al menos 2 caracteres')
     .max(80, 'El nombre no puede superar los 80 caracteres'),
-  email,
+  email: email.refine((value) => !value.endsWith(`@${DELETED_EMAIL_DOMAIN}`), {
+    error: 'No se puede usar ese dominio de correo',
+  }),
   password: z
     .string({ error: 'La contraseña es obligatoria' })
     .min(8, 'La contraseña debe tener al menos 8 caracteres')

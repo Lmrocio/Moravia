@@ -88,19 +88,30 @@ it('crea una comunidad, muestra el QR y permite copiar, descargar y revocar', as
   );
   const writeText = vi.fn().mockResolvedValue();
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
-  vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,abc');
+  const toDataURL = vi
+    .spyOn(HTMLCanvasElement.prototype, 'toDataURL')
+    .mockReturnValue('data:image/png;base64,abc');
   const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
   const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
   render(<App />);
-  fireEvent.change(await screen.findByLabelText('Nombre de la finca'), {
-    target: { value: 'Los Olivos' },
-  });
+  const name = await screen.findByLabelText('Nombre de la finca');
+  fireEvent.change(name, { target: { value: ' A ' } });
   fireEvent.change(screen.getByLabelText('Dirección'), { target: { value: 'Calle 1' } });
-  fireEvent.change(screen.getByLabelText(/Plantas superiores/), { target: { value: '2' } });
+  const floors = screen.getByLabelText(/Plantas superiores/);
+  fireEvent.change(floors, { target: { value: '0' } });
   fireEvent.change(screen.getByLabelText(/Puertas por planta/), { target: { value: '3' } });
+  const create = screen.getByRole('button', { name: /Crear comunidad/ });
+  fireEvent.click(create);
+  expect(screen.getByRole('alert').textContent).toMatch(/al menos dos caracteres/);
+  fireEvent.change(name, { target: { value: 'Los Olivos' } });
+  fireEvent.click(create);
+  expect(screen.getByRole('alert').textContent).toMatch(/al menos una vivienda/);
+  expect(requests.some((request) => request.url.endsWith('/api/communities'))).toBe(false);
+
+  fireEvent.change(floors, { target: { value: '2' } });
   expect(screen.getByText('6')).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: /Crear comunidad/ }));
+  fireEvent.click(create);
   fireEvent.click(await screen.findByRole('button', { name: /Generar invitación/ }));
 
   const qr = await screen.findByLabelText('Código QR de invitación');
@@ -115,7 +126,11 @@ it('crea una comunidad, muestra el QR y permite copiar, descargar y revocar', as
   await waitFor(() => expect(writeText).toHaveBeenCalledWith(joinUrl));
   expect((await screen.findByRole('status')).textContent).toContain('Enlace copiado');
   fireEvent.click(screen.getByRole('button', { name: /Descargar QR/ }));
-  expect(click).toHaveBeenCalled();
+  expect(toDataURL).toHaveBeenCalledWith('image/png');
+  expect(click.mock.contexts[0]).toMatchObject({
+    download: 'moravia-invitacion.png',
+    href: 'data:image/png;base64,abc',
+  });
   fireEvent.click(screen.getByRole('button', { name: /Revocar invitación/ }));
   await waitFor(() => expect(screen.queryByLabelText('Código QR de invitación')).toBeNull());
   expect(requests.some((request) => request.method === 'DELETE')).toBe(true);

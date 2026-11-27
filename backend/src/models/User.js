@@ -60,6 +60,12 @@ const userSchema = new mongoose.Schema(
       enum: Object.values(MEMBERSHIP_STATUS),
       default: MEMBERSHIP_STATUS.NONE,
     },
+    // Fecha en la que el usuario eliminó su cuenta (RGPD). Sus datos personales se
+    // anonimizan, pero el documento se conserva para no romper las referencias.
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

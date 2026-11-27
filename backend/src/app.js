@@ -7,6 +7,7 @@ import { csrfProtection } from './middlewares/csrf.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import communityRoutes from './routes/community.routes.js';
+import userRoutes from './routes/user.routes.js';
 import invitationRoutes from './routes/invitation.routes.js';
 
 const app = express();
@@ -31,6 +32,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/communities', communityRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/invitations', invitationRoutes);
 
 app.use(notFound);
