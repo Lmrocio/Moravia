@@ -142,8 +142,14 @@ function CreateCommunity({ onCreated }) {
 
   async function submit(event) {
     event.preventDefault();
-    if (!fields.name.trim() || !fields.address.trim() || !total) {
-      setError('Completa los datos y añade al menos una vivienda.');
+    const name = fields.name.trim();
+    const address = fields.address.trim();
+    if (name.length < 2 || address.length < 2) {
+      setError('El nombre de la finca y la dirección deben tener al menos dos caracteres.');
+      return;
+    }
+    if (total < 1) {
+      setError('Añade al menos una vivienda.');
       return;
     }
     setLoading(true);
@@ -152,8 +158,8 @@ function CreateCommunity({ onCreated }) {
       const data = await api('/api/communities', {
         method: 'POST',
         body: {
-          name: fields.name.trim(),
-          address: fields.address.trim(),
+          name,
+          address,
           floors: Number(fields.floors),
           doorsPerFloor: Number(fields.doorsPerFloor),
           groundFloorDoors: Number(fields.groundFloorDoors),
