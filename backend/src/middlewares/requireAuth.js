@@ -17,7 +17,8 @@ export async function requireAuth(req, res, next) {
   }
 
   const user = await User.findById(payload.sub);
-  if (!user) {
+  // Una cuenta eliminada no puede seguir usando sesiones abiertas antes del borrado.
+  if (!user || user.deletedAt) {
     throw new AppError(401, 'Sesión no válida o caducada');
   }
 

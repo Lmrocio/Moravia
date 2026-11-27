@@ -25,7 +25,7 @@ export async function login(req, res) {
   const user = await User.findOne({ email }).select('+passwordHash');
   const valid = await verifyPassword(password, user?.passwordHash ?? DUMMY_HASH);
 
-  if (!user || !valid) {
+  if (!user || user.deletedAt || !valid) {
     throw new AppError(401, 'Correo o contraseña incorrectos');
   }
 

@@ -270,6 +270,28 @@ describe('Validación y revocación de invitaciones', () => {
     expect((await validate(token).expect(200)).body.dwellings).toContainEqual(dwelling);
   });
 
+  it('cancela la solicitud de alta y la invitación si el presidente se da de baja', async () => {
+    const { president, token, validate } = await setupInvitation();
+    const dwelling = (await validate(token).expect(200)).body.dwellings[0];
+    const neighbor = await registerViaInvitation(token, dwelling.id, 'pendiente@example.com');
+    expect(neighbor.response.status).toBe(201);
+    expect(neighbor.response.body.user.membershipStatus).toBe('pending');
+
+    await president.agent
+      .delete('/api/users/me')
+      .set('X-CSRF-Token', president.csrf)
+      .send({ password: 'contraseña-segura' })
+      .expect(204);
+
+    await validate(token).expect(404);
+    const { body } = await neighbor.agent.get('/api/auth/me').expect(200);
+    expect(body.user).toMatchObject({
+      communityId: null,
+      dwellingId: null,
+      membershipStatus: 'none',
+    });
+  });
+
   it('reserva la vivienda al solicitarla, la libera al denegar y conserva otra al aprobar', async () => {
     const { president, communityId, token, validate } = await setupInvitation();
     const available = (await validate(token).expect(200)).body.dwellings;
