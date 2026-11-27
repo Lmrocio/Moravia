@@ -109,7 +109,7 @@ Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `GET` | `/api/users/me/export` | Descarga un JSON (`moravia-mis-datos-AAAA-MM-DD.json`) con el perfil, la comunidad, la vivienda y las incidencias del usuario. `200`, `401`. |
+| `GET` | `/api/users/me/export` | Descarga un JSON (`moravia-mis-datos-AAAA-MM-DD.json`) con el perfil, la comunidad, la vivienda y el historial de incidencias del usuario. `200`, `401`. |
 | `DELETE` | `/api/users/me` | Elimina la cuenta. Pide `{ "password": "…" }`. `204`, `400`, `401`, `403`, `409`. |
 | `POST` | `/api/users/me/presidency/transfer` | El presidente cede la presidencia a un vecino validado de su comunidad (`{ "userId": "…" }`) y pasa a ser vecino. `200`, `400`, `401`, `403`, `404`. |
 
@@ -119,8 +119,10 @@ Las rutas `DELETE` y `POST` requieren la cabecera `X-CSRF-Token`.
 
 **Baja del presidente:**
 
-- Si hay más personas en la comunidad (vecinos o solicitudes), recibe `409`: primero debe transferir la presidencia.
-- Si está solo, su baja elimina también la comunidad, sus viviendas y su invitación.
+- Si hay vecinos validados, recibe `409`: primero debe transferir la presidencia.
+- Si no hay vecinos validados, se revoca la invitación y se cancelan las solicitudes pendientes sin borrar las cuentas que las presentaron. La comunidad y sus viviendas se conservan si tienen historial de incidencias. En ese caso se marca la comunidad con `archivedAt`. Si no hay historial, se borran.
+
+La exportación incluye las incidencias presentadas por el usuario y su conversación. Si el usuario escribió en una incidencia ajena, solo se incluyen sus propios mensajes de esa incidencia. El modelo `Ticket` se comparte con el futuro módulo de incidencias, que añadirá sus rutas de creación y gestión.
 
 La baja y la creación de una comunidad se ejecutan en transacciones: si coinciden en el tiempo, nunca queda una comunidad cuyo presidente ha eliminado su cuenta.
 

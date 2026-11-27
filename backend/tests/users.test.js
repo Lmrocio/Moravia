@@ -4,10 +4,17 @@ import app from '../src/app.js';
 import { Community } from '../src/models/Community.js';
 import { Dwelling } from '../src/models/Dwelling.js';
 import { Invitation } from '../src/models/Invitation.js';
+import { Ticket } from '../src/models/Ticket.js';
 import { User } from '../src/models/User.js';
 
 const password = 'contraseña-segura';
 const building = { name: 'Comunidad', address: 'Calle 1', floors: 1, doorsPerFloor: 2 };
+const closedTicket = {
+  title: 'Luz de la escalera',
+  description: 'La bombilla no enciende',
+  category: 'electricidad',
+  status: 'resuelta',
+};
 
 // Registra un usuario y devuelve su "navegador" (agent) con la sesión y el token CSRF.
 async function signUp(email = 'carmen@example.com') {
@@ -52,7 +59,7 @@ async function communityWithResident() {
 }
 
 beforeAll(async () => {
-  await Promise.all([User.init(), Community.init(), Dwelling.init(), Invitation.init()]);
+  await Promise.all([User.init(), Community.init(), Dwelling.init(), Invitation.init(), Ticket.init()]);
 });
 
 describe('GET /api/users/me/export', () => {
@@ -101,6 +108,39 @@ describe('GET /api/users/me/export', () => {
       isPresident: true,
     });
     expect(res.body.dwelling).toEqual({ id: dwelling.id, label: '1º B' });
+  });
+
+  it('exporta el historial propio y excluye el contenido de incidencias ajenas', async () => {
+    const { president, resident, communityId } = await communityWithResident();
+    const other = await signUp('otro@example.com');
+    const own = await Ticket.create({
+      ...closedTicket,
+      communityId,
+      authorId: president.user.id,
+      messages: [{ authorId: resident.user.id, body: 'Aviso recibido' }],
+    });
+    const replied = await Ticket.create({
+      ...closedTicket,
+      communityId,
+      authorId: resident.user.id,
+      messages: [
+        { authorId: resident.user.id, body: 'Consulta privada' },
+        { authorId: president.user.id, body: 'Ya se ha arreglado' },
+      ],
+    });
+    await Ticket.create({ ...closedTicket, communityId, authorId: other.user.id });
+
+    const res = await president.agent.get('/api/users/me/export').expect(200);
+    expect(res.headers['cache-control']).toBe('no-store');
+    expect(res.body.incidents).toHaveLength(2);
+    expect(res.body.incidents).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: own.id, ...closedTicket, messages: [
+        expect.objectContaining({ body: 'Aviso recibido', sentByMe: false }),
+      ] }),
+      { id: replied.id, messages: [
+        expect.objectContaining({ body: 'Ya se ha arreglado', sentByMe: true }),
+      ] },
+    ]));
   });
 });
 
@@ -232,6 +272,41 @@ describe('Baja del presidente', () => {
 
     const community = await Community.findById(communityId);
     expect(community.presidentId.toString()).toBe(resident.user.id);
+  });
+
+  it('permite la baja con solo solicitudes pendientes y conserva los tickets cerrados', async () => {
+    const { president, resident, communityId } = await communityWithResident();
+    const dwelling = await Dwelling.findOne({ communityId });
+    await User.updateOne(
+      { _id: resident.user.id },
+      { membershipStatus: 'pending', dwellingId: dwelling._id },
+    );
+    await president.agent
+      .post(`/api/communities/${communityId}/invitation`)
+      .set('X-CSRF-Token', president.csrf)
+      .expect(201);
+    const ticket = await Ticket.create({
+      ...closedTicket,
+      communityId,
+      authorId: president.user.id,
+      messages: [{ authorId: president.user.id, body: 'Ticket cerrado' }],
+    });
+
+    await deleteAccount(president).expect(204);
+
+    const saved = await Ticket.findById(ticket._id).populate('authorId communityId messages.authorId');
+    expect(saved.status).toBe('resuelta');
+    expect(saved.authorId.name).toBe('Usuario eliminado');
+    expect(saved.messages[0].authorId.id).toBe(president.user.id);
+    expect(saved.communityId.archivedAt).toBeInstanceOf(Date);
+    expect(await Dwelling.exists({ _id: dwelling._id })).not.toBeNull();
+    expect(await Invitation.countDocuments({ communityId })).toBe(0);
+    expect(await User.findById(resident.user.id)).toMatchObject({
+      communityId: null,
+      dwellingId: null,
+      membershipStatus: 'none',
+      deletedAt: null,
+    });
   });
 });
 

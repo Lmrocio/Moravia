@@ -20,6 +20,10 @@ const communitySchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'La comunidad necesita un presidente'],
     },
+    archivedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
