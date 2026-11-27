@@ -49,7 +49,7 @@ Los siguientes perfiles son **arquetipos de diseño**, no personas entrevistadas
 
 ## 3. Investigación exploratoria
 
-Hablamos con personas de nuestro entorno sobre cómo se comunican en sus comunidades y qué les resultaría útil en una aplicación. Fueron conversaciones informales que nos sirvieron para orientar el diseño.
+Hablamos con personas de nuestro entorno sobre cómo se comunican en sus comunidades y qué les resultaría útil en una aplicación. Fueron conversaciones informales que nos sirvieron para orientar el diseño. Sus conclusiones se limitan a las personas consultadas.
 
 Las personas consultadas señalaron estas dificultades:
 
