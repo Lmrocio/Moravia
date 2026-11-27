@@ -86,11 +86,23 @@ export async function createInvitation(req, res) {
   const token = generateToken();
   const expiresAt = new Date(Date.now() + INVITATION_TTL_MS);
 
-  await Invitation.findOneAndUpdate(
-    { communityId: community._id },
-    { tokenHash: hashToken(token), expiresAt, createdBy: req.user._id },
-    { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true },
-  );
+  await mongoose.connection.transaction(async (session) => {
+    // La escritura en la comunidad serializa la invitación con la baja y el traspaso.
+    const activeCommunity = await Community.updateOne(
+      { _id: community._id, presidentId: req.user._id, archivedAt: null },
+      { $currentDate: { updatedAt: true } },
+      { session, timestamps: false },
+    );
+    if (!activeCommunity.matchedCount) {
+      throw new AppError(403, 'Solo el presidente de la comunidad puede generar invitaciones');
+    }
+
+    await Invitation.findOneAndUpdate(
+      { communityId: community._id },
+      { tokenHash: hashToken(token), expiresAt, createdBy: req.user._id },
+      { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true, session },
+    );
+  });
 
   // El token en claro solo se devuelve aquí, una vez. El frontend dibuja el QR con joinUrl.
   res.status(201).json({

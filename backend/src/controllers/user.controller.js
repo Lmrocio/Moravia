@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { Community } from '../models/Community.js';
 import { Dwelling } from '../models/Dwelling.js';
 import { Invitation } from '../models/Invitation.js';
+import { Ticket } from '../models/Ticket.js';
 import { MEMBERSHIP_STATUS, ROLES, User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
 import { clearAuthCookie, hashPassword, verifyPassword } from '../utils/auth.js';
@@ -14,9 +15,12 @@ import { DELETED_EMAIL_DOMAIN } from '../validators/auth.schemas.js';
 export async function exportMyData(req, res) {
   const user = req.user;
 
-  const [community, dwelling] = await Promise.all([
+  const [community, dwelling, tickets] = await Promise.all([
     user.communityId ? Community.findById(user.communityId) : null,
     user.dwellingId ? Dwelling.findById(user.dwellingId) : null,
+    Ticket.find({ $or: [{ authorId: user._id }, { 'messages.authorId': user._id }] })
+      .sort({ createdAt: 1, _id: 1 })
+      .lean(),
   ]);
 
   const data = {
@@ -29,31 +33,59 @@ export async function exportMyData(req, res) {
       isPresident: community.presidentId.equals(user._id),
     },
     dwelling: dwelling && { id: dwelling.id, label: dwelling.label },
-    // Se rellenará cuando exista el modelo de incidencias.
-    incidents: [],
+    incidents: tickets.map(({ _id, authorId, messages, ...ticket }) => {
+      const ownTicket = authorId.equals(user._id);
+      const ownMessages = messages
+        .filter((message) => ownTicket || message.authorId.equals(user._id))
+        .map(({ authorId: senderId, body, createdAt }) => ({
+          sentByMe: senderId.equals(user._id),
+          body,
+          createdAt,
+        }));
+
+      if (!ownTicket) return { id: _id, messages: ownMessages };
+      const { communityId, title, description, category, status, imageId, createdAt, updatedAt } =
+        ticket;
+      return {
+        id: _id,
+        communityId,
+        title,
+        description,
+        category,
+        status,
+        imageId,
+        createdAt,
+        updatedAt,
+        messages: ownMessages,
+      };
+    }),
   };
 
   const date = data.exportedAt.slice(0, 10);
   res.attachment(`moravia-mis-datos-${date}.json`);
+  res.set('Cache-Control', 'no-store');
   res.json(data);
 }
 
-// Si el presidente se da de baja y no queda nadie más en la comunidad, la comunidad
-// desaparece con él. Si hay vecinos o solicitudes, primero tiene que transferir la
-// presidencia.
-async function dissolveCommunityIfAlone(president, session) {
+// Si quedan vecinos validados, el presidente debe transferirles la presidencia.
+async function closeCommunityWithoutSuccessor(president, session) {
   const community = await Community.findOne({
     _id: president.communityId,
     presidentId: president._id,
   }).session(session);
   if (!community) return;
 
-  const others = await User.countDocuments({
+  const otherMembers = {
     communityId: community._id,
     _id: { $ne: president._id },
     deletedAt: null,
+  };
+  const successor = await User.exists({
+    ...otherMembers,
+    role: ROLES.RESIDENT,
+    membershipStatus: MEMBERSHIP_STATUS.VALIDATED,
   }).session(session);
-  if (others > 0) {
+  if (successor) {
     throw new AppError(
       409,
       'Eres el presidente de tu comunidad: transfiere la presidencia a otro vecino antes de eliminar tu cuenta',
@@ -62,6 +94,16 @@ async function dissolveCommunityIfAlone(president, session) {
 
   // En una transacción las operaciones van una detrás de otra, no en paralelo.
   await Invitation.deleteMany({ communityId: community._id }, { session });
+  await User.updateMany(
+    { ...otherMembers, membershipStatus: MEMBERSHIP_STATUS.PENDING },
+    { $set: { communityId: null, dwellingId: null, membershipStatus: MEMBERSHIP_STATUS.NONE } },
+    { session },
+  );
+  if (await Ticket.exists({ communityId: community._id }).session(session)) {
+    // La comunidad y sus viviendas siguen disponibles para las referencias del historial.
+    await Community.updateOne({ _id: community._id }, { archivedAt: new Date() }, { session });
+    return;
+  }
   await Dwelling.deleteMany({ communityId: community._id }, { session });
   await Community.deleteOne({ _id: community._id }, { session });
 }
@@ -100,7 +142,7 @@ export async function deleteMyAccount(req, res) {
       }
 
       if (user.role === ROLES.PRESIDENT) {
-        await dissolveCommunityIfAlone(user, session);
+        await closeCommunityWithoutSuccessor(user, session);
       }
 
       await User.updateOne({ _id: user._id }, { $set: anonymized }, { session });
