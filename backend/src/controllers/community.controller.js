@@ -85,18 +85,18 @@ export async function getPresidentCommunity(req) {
   return community;
 }
 
-async function updatePresidentInvitation(req, update) {
+export async function updateAsPresident(req, update) {
   const community = await getPresidentCommunity(req);
 
   await mongoose.connection.transaction(async (session) => {
-    // La escritura en la comunidad coordina la invitación con la baja y el traspaso.
+    // Coordina la operación con la baja y el traspaso de presidencia.
     const activeCommunity = await Community.updateOne(
       { _id: community._id, presidentId: req.user._id, archivedAt: null },
       { $currentDate: { updatedAt: true } },
       { session, timestamps: false },
     );
     if (!activeCommunity.matchedCount) {
-      throw new AppError(403, 'Solo el presidente de la comunidad puede gestionar invitaciones');
+      throw new AppError(403, 'Solo el presidente de la comunidad puede realizar esta acción');
     }
 
     await update(community._id, session);
@@ -110,7 +110,7 @@ export async function createInvitation(req, res) {
   const joinUrl = new URL('/unirse', env.CLIENT_ORIGIN);
   joinUrl.searchParams.set('token', token);
 
-  await updatePresidentInvitation(req, (communityId, session) =>
+  await updateAsPresident(req, (communityId, session) =>
     Invitation.findOneAndUpdate(
       { communityId },
       { tokenHash: hashToken(token), expiresAt, createdBy: req.user._id },
@@ -130,7 +130,7 @@ export async function createInvitation(req, res) {
 
 // La revocación es idempotente: no revela si ya existía una invitación.
 export async function revokeInvitation(req, res) {
-  await updatePresidentInvitation(req, (communityId, session) =>
+  await updateAsPresident(req, (communityId, session) =>
     Invitation.deleteOne({ communityId }, { session }),
   );
   res.status(204).end();

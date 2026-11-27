@@ -6,7 +6,7 @@ import { MEMBERSHIP_STATUS, ROLES, User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
 import { hashPassword, setAuthCookie } from '../utils/auth.js';
 import { hashToken } from '../utils/tokens.js';
-import { getPresidentCommunity } from './community.controller.js';
+import { getPresidentCommunity, updateAsPresident } from './community.controller.js';
 
 function activeToken(token) {
   return { tokenHash: hashToken(token), expiresAt: { $gt: new Date() } };
@@ -112,7 +112,6 @@ export async function listMembershipRequests(req, res) {
 }
 
 export async function decideMembershipRequest(req, res) {
-  const community = await getPresidentCommunity(req);
   if (!mongoose.isObjectIdOrHexString(req.params.userId)) {
     throw new AppError(404, 'Solicitud no encontrada');
   }
@@ -120,16 +119,21 @@ export async function decideMembershipRequest(req, res) {
     req.body.decision === 'approve'
       ? { membershipStatus: MEMBERSHIP_STATUS.VALIDATED }
       : { membershipStatus: MEMBERSHIP_STATUS.REJECTED, communityId: null, dwellingId: null };
-  const result = await User.updateOne(
-    {
-      _id: req.params.userId,
-      communityId: community._id,
-      role: ROLES.RESIDENT,
-      membershipStatus: MEMBERSHIP_STATUS.PENDING,
-    },
-    { $set: update },
-  );
-  if (!result.matchedCount)
-    throw new AppError(404, 'No hay una solicitud pendiente para este vecino');
+  await updateAsPresident(req, async (communityId, session) => {
+    const result = await User.updateOne(
+      {
+        _id: req.params.userId,
+        communityId,
+        role: ROLES.RESIDENT,
+        membershipStatus: MEMBERSHIP_STATUS.PENDING,
+        deletedAt: null,
+      },
+      { $set: update },
+      { session },
+    );
+    if (!result.matchedCount) {
+      throw new AppError(404, 'No hay una solicitud pendiente para este vecino');
+    }
+  });
   res.status(204).end();
 }
