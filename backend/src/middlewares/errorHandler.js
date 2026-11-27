@@ -10,9 +10,10 @@ export function errorHandler(err, req, res, next) {
   let status = 500;
   let message = 'Error interno del servidor';
   let details;
+  let code;
 
   if (err instanceof AppError) {
-    ({ status, message, details } = err);
+    ({ status, message, details, code } = err);
   } else if (err.type === 'entity.parse.failed') {
     status = 400;
     message = 'El cuerpo de la petición no es un JSON válido';
@@ -29,5 +30,5 @@ export function errorHandler(err, req, res, next) {
     console.error(err);
   }
 
-  res.status(status).json({ error: message, ...(details && { details }) });
+  res.status(status).json({ error: message, ...(details && { details }), ...(code && { code }) });
 }

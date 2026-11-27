@@ -76,17 +76,22 @@ Flujo desde el frontend (con `fetch` o Axios, siempre con `credentials: 'include
 2. En cada `POST`/`PUT`/`PATCH`/`DELETE`: enviar la cabecera `X-CSRF-Token: <csrfToken>`.
 3. Para saber si hay sesión: `GET /api/auth/me` (`401` = no hay sesión).
 
-Los errores siempre tienen la forma `{ "error": "mensaje", "details": [{ "field", "message" }] }` (`details` solo en errores de validación).
+Los errores contienen `{ "error": "mensaje" }` y pueden incluir `details` en errores de validación. Si el token CSRF falta o no es válido, la respuesta es `403` e incluye `"code": "CSRF_INVALID"`; el cliente puede renovar el token y reintentar la petición.
 
 
 ## Comunidades e invitaciones.
 
-Todas las rutas requieren sesión y, al ser `POST`, la cabecera `X-CSRF-Token`.
+Todas estas rutas requieren la cabecera `X-CSRF-Token`. La validación de una invitación es pública y el resto requiere una sesión.
 
 | Método | Ruta | Quién | Descripción |
 |---|---|---|---|
 | `POST` | `/api/communities` | Usuario sin comunidad | Crea la comunidad y sus viviendas; el creador pasa a ser presidente. `201`, `400`, `401`, `409`. |
 | `POST` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Genera un token de invitación válido 48 h. `201`, `401`, `403`, `404`. |
+| `DELETE` | `/api/communities/:id/invitation` | Presidente de esa comunidad | Revoca la invitación vigente. `204`, `401`, `403`, `404`. |
+| `POST` | `/api/invitations/validate` | Público | Comprueba el token y devuelve el nombre de la finca y sus viviendas disponibles. Requiere CSRF. |
+| `POST` | `/api/invitations/register` | Público | Recibe `token`, `dwellingId`, `name`, `email` y `password`. Crea una cuenta pendiente e inicia sesión. Requiere CSRF. |
+| `GET` | `/api/communities/:id/membership-requests` | Presidente de esa comunidad | Lista las solicitudes pendientes. |
+| `PATCH` | `/api/communities/:id/membership-requests/:userId` | Presidente de esa comunidad | Resuelve la solicitud mediante `{ "decision": "approve" }` o `{ "decision": "reject" }`. Requiere CSRF. |
 
 **Crear una comunidad.** El servidor genera las viviendas a partir de la estructura del edificio:
 
@@ -104,6 +109,7 @@ Crea `Bajo A`, `Bajo B` y de `1º A` a `4º D` (18 viviendas). `floors` va de 0 
 
 **Invitación.** Responde `{ invitation: { token, expiresAt, joinUrl } }`. El token en claro solo se devuelve en ese momento; en la base de datos se guarda su hash SHA-256 con un índice TTL que lo borra al caducar. Cada comunidad tiene una única invitación activa: generar otra invalida la anterior. El frontend dibuja el QR a partir de `joinUrl` (`CLIENT_ORIGIN/unirse?token=…`).
 
+Tanto la validación inicial como el registro comprueban el hash y `expiresAt`, ya que el borrado por TTL puede retrasarse. La vivienda se reserva desde que se presenta la solicitud. Aprobar confirma la vinculación y denegar libera la vivienda y conserva la cuenta con estado `rejected`.
 
 ## Datos personales (RGPD).
 
@@ -147,7 +153,7 @@ backend/
 
 ## Modelos.
 
-- **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId` (null hasta unirse a una comunidad), `membershipStatus` (`none` | `pending` | `validated`), `deletedAt` (fecha de eliminación de la cuenta o null).
+- **User:** `name`, `email` (único y en minúsculas), `passwordHash` (no se devuelve nunca), `role` (`president` | `resident`), `communityId` y `dwellingId`, `membershipStatus` (`none` | `pending` | `validated` | `rejected`) y `deletedAt` (fecha de eliminación de la cuenta o null). Cada vivienda puede estar vinculada a una sola cuenta.
 - **Community:** `name`, `address`, `presidentId`.
 - **Dwelling:** `communityId`, `floor` (0 = planta baja), `door`, `label` (`Bajo A`, `1º B`…). Índice único `(communityId, label)`.
 - **Invitation:** `communityId` (única por comunidad), `tokenHash` (SHA-256), `createdBy`, `expiresAt` (índice TTL).

@@ -63,10 +63,7 @@ export async function createCommunity(req, res) {
   res.status(201).json({ community, dwellings, user });
 }
 
-// POST /api/communities/:id/invitation
-// Genera un token de invitación de 48 h. Solo puede hacerlo el presidente de esa
-// comunidad. Una invitación nueva sustituye a la anterior, que deja de funcionar.
-export async function createInvitation(req, res) {
+export async function getPresidentCommunity(req) {
   const { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     throw new AppError(404, 'Comunidad no encontrada');
@@ -78,38 +75,63 @@ export async function createInvitation(req, res) {
   }
 
   const isPresident =
-    req.user.role === ROLES.PRESIDENT && community.presidentId.equals(req.user._id);
+    req.user.role === ROLES.PRESIDENT &&
+    req.user.communityId?.equals(community._id) &&
+    community.presidentId.equals(req.user._id);
   if (!isPresident) {
-    throw new AppError(403, 'Solo el presidente de la comunidad puede generar invitaciones');
+    throw new AppError(403, 'Solo el presidente de la comunidad puede realizar esta acción');
   }
 
-  const token = generateToken();
-  const expiresAt = new Date(Date.now() + INVITATION_TTL_MS);
+  return community;
+}
+
+export async function updateAsPresident(req, update) {
+  const community = await getPresidentCommunity(req);
 
   await mongoose.connection.transaction(async (session) => {
-    // La escritura en la comunidad serializa la invitación con la baja y el traspaso.
+    // Coordina la operación con la baja y el traspaso de presidencia.
     const activeCommunity = await Community.updateOne(
       { _id: community._id, presidentId: req.user._id, archivedAt: null },
       { $currentDate: { updatedAt: true } },
       { session, timestamps: false },
     );
     if (!activeCommunity.matchedCount) {
-      throw new AppError(403, 'Solo el presidente de la comunidad puede generar invitaciones');
+      throw new AppError(403, 'Solo el presidente de la comunidad puede realizar esta acción');
     }
 
-    await Invitation.findOneAndUpdate(
-      { communityId: community._id },
+    await update(community._id, session);
+  });
+}
+
+// Una invitación nueva sustituye a la anterior y caduca a las 48 horas.
+export async function createInvitation(req, res) {
+  const token = generateToken();
+  const expiresAt = new Date(Date.now() + INVITATION_TTL_MS);
+  const joinUrl = new URL('/unirse', env.CLIENT_ORIGIN);
+  joinUrl.searchParams.set('token', token);
+
+  await updateAsPresident(req, (communityId, session) =>
+    Invitation.findOneAndUpdate(
+      { communityId },
       { tokenHash: hashToken(token), expiresAt, createdBy: req.user._id },
       { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true, session },
-    );
-  });
+    ),
+  );
 
   // El token en claro solo se devuelve aquí, una vez. El frontend dibuja el QR con joinUrl.
   res.status(201).json({
     invitation: {
       token,
       expiresAt,
-      joinUrl: `${env.CLIENT_ORIGIN}/unirse?token=${token}`,
+      joinUrl: joinUrl.href,
     },
   });
+}
+
+// La revocación es idempotente: no revela si ya existía una invitación.
+export async function revokeInvitation(req, res) {
+  await updateAsPresident(req, (communityId, session) =>
+    Invitation.deleteOne({ communityId }, { session }),
+  );
+  res.status(204).end();
 }

@@ -1,10 +1,12 @@
 import { env } from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
 import app from './app.js';
+import { User } from './models/User.js';
 
 async function start() {
   try {
     await connectDB(env.MONGODB_URI);
+    await User.init();
   } catch (err) {
     console.error('No se pudo conectar a MongoDB:', err.message);
     process.exit(1);
