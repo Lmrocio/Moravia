@@ -1,6 +1,6 @@
 # Moravía
 
-**Plataforma web para la gestión cotidiana de comunidades de vecinos autogestionadas**
+Aplicación web para comunidades de vecinos autogestionadas. Proyecto de Desarrollo de Aplicaciones Web.
 
 ## Índice
 
@@ -26,13 +26,16 @@ El producto mínimo viable (MVP) comprende:
 - **Avisos:** tablón de lectura para los miembros, con publicaciones realizadas por el presidente.
 - **Consultas:** propuestas orientativas con un máximo de una respuesta por vivienda validada y resultados agregados tras el cierre.
 
+> [!NOTE]
+> Esta lista describe el alcance previsto. En la rama de integración ya está disponible la API de autenticación, comunidades, viviendas, invitaciones y gestión de datos personales. El panel, el alta por QR y las vistas legales se desarrollan en sus propias ramas. La entrega se plantea como una demo académica con datos ficticios.
+
 Las consultas no sustituyen los acuerdos formales de la comunidad. La separación entre participación y respuestas reduce la vinculación directa del voto, pero no garantiza el anonimato absoluto. El MVP excluye contabilidad, pagos, aplicaciones móviles nativas y voto ponderado. El detalle de prioridades y exclusiones se encuentra en [objetivos y alcance](docs/objetivos-alcance.md).
 
 ## Tecnologías
 
 | Capa | Tecnología prevista | Función |
-|---|---|---|
-| Interfaz | React y Tailwind CSS | Componentes y diseño adaptable a dispositivos móviles. |
+| --- | --- | --- |
+| Interfaz | React y Vite | Componentes y entorno de desarrollo. Las ramas de interfaz usan CSS para adaptar las vistas a móviles. |
 | Servidor | Node.js y Express | API REST, autenticación y control de acceso. |
 | Datos | MongoDB y Mongoose | Almacenamiento y modelado de los datos de la aplicación. |
 | Servicios | Vercel, Render, MongoDB Atlas y Cloudinary | Despliegue previsto, base de datos y almacenamiento de imágenes. |
@@ -42,18 +45,20 @@ Las versiones de referencia, los límites de los servicios y las decisiones téc
 ## Documentación de la propuesta
 
 | Documento | Criterio | Contenido |
-|---|---|---|
+| --- | --- | --- |
 | [Problema y propuesta de valor](docs/problema.md) | 2a | Necesidad identificada, usuarios, investigación exploratoria y análisis de alternativas. |
 | [Viabilidad técnica](docs/viabilidad-tecnica.md) | 2b | Requisitos priorizados, arquitectura, modelo de datos, capacidades y riesgos. |
 | [Objetivos y alcance](docs/objetivos-alcance.md) | 2d | Objetivos SMART, MVP, exclusiones y criterios de éxito. |
 | [Recursos y organización](docs/recursos.md) | 2e | Responsabilidades, calendario, herramientas y servicios. |
 | [Financiación y capital de trabajo](docs/financiacion.md) | 2g | Costes de producción, caja para seis meses y opciones de financiación. |
-| [Seguimiento semanal](docs/seguimiento/README.md) | Seguimiento | Plantilla del profesor y revisiones de la semana previa y los seis sprints. |
+| [Análisis de competencia](docs/analisis-competencia.md) | Complemento de 2a | Comparación de productos, empresas y condiciones consultadas. |
+
+Consulta también el [seguimiento semanal](docs/seguimiento/README.md), la [guía de trabajo](docs/buenas-practicas.md) y la [guía de estilo documental](docs/estilo-documental.md).
 
 ## Equipo y planificación
 
 | Integrante | Responsabilidades principales |
-|---|---|
+| --- | --- |
 | **Rocío Luque Montes** | Diseño de interfaz y experiencia de usuario, frontend y pruebas de interfaz. |
 | **Pablo Sanz Aznar** | Backend, base de datos, integraciones y despliegue. |
 

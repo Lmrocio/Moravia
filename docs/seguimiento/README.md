@@ -1,4 +1,6 @@
-﻿# Seguimiento semanal de VecinHub
+# Seguimiento semanal de Moravía
+
+![Seguimiento](../assets/seguimiento.svg)
 
 Este directorio reúne los registros de revisión del proyecto. Se conserva una [copia de la plantilla proporcionada por el profesor](plantilla-profesor.md) y se utiliza un archivo independiente para cada reunión. La semana previa documenta la preparación de la propuesta; los seis sprints de desarrollo siguen el [calendario del proyecto](../recursos.md#2-estimación-y-calendario).
 
@@ -11,7 +13,7 @@ Este directorio reúne los registros de revisión del proyecto. Se conserva una 
 ## Registros y fechas
 
 | Ciclo | Periodo | Revisión prevista | Registro |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Semana previa | 2–6 de noviembre de 2026 | 6 de noviembre | [Preparación de la propuesta](semana-00-2026-11-06.md) |
 | Sprint 1 | 9–13 de noviembre de 2026 | 13 de noviembre | [Revisión del sprint 1](sprint-01-2026-11-13.md) |
 | Sprint 2 | 16–20 de noviembre de 2026 | 20 de noviembre | [Revisión del sprint 2](sprint-02-2026-11-20.md) |
@@ -20,7 +22,8 @@ Este directorio reúne los registros de revisión del proyecto. Se conserva una 
 | Sprint 5 | 7–11 de diciembre de 2026 | 11 de diciembre | [Revisión del sprint 5](sprint-05-2026-12-11.md) |
 | Sprint 6 | 14–18 de diciembre de 2026 | 18 de diciembre | [Revisión final](sprint-06-2026-12-18.md) |
 
-Las fechas y los objetivos adelantados en los registros proceden de la planificación; no acreditan que una reunión o una tarea se haya realizado. Actualizadlos si cambian y anotad la fecha real de cada reunión. La semana previa no forma parte de los seis sprints ni de sus 72 horas-persona presupuestadas.
+> [!NOTE]
+> Las fechas y los objetivos adelantados proceden de la planificación. En cada registro anotamos la fecha real de revisión y el trabajo que podemos acreditar. La semana previa queda fuera de los seis sprints y de sus 72 horas-persona presupuestadas.
 
 ## Cómo completar cada revisión
 

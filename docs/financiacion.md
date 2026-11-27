@@ -2,6 +2,14 @@
 
 Queremos probar Moravía con hasta diez comunidades pequeñas antes de depender de las cuotas. Calculamos primero seis meses sin ingresos y después cuánto tendríamos que facturar para sostener la dedicación de los dos socios a tiempo parcial. El [presupuesto de la demo académica](recursos.md#4-servicios-externos-y-costes) corresponde a otro entorno.
 
+## Índice
+
+- [1. Coste de la infraestructura](#1-coste-de-la-infraestructura)
+- [2. Caja para seis meses sin ingresos](#2-caja-para-seis-meses-sin-ingresos)
+- [3. Servicio de pago con dos perfiles júnior](#3-servicio-de-pago-con-dos-perfiles-júnior)
+- [4. Vías de financiación](#4-vías-de-financiación)
+- [5. Cómo conseguiríamos y usaríamos el dinero](#5-cómo-conseguiríamos-y-usaríamos-el-dinero)
+
 ## 1. Coste de la infraestructura
 
 Consultamos las tarifas el 24 de noviembre de 2026. Para hacer las cuentas usamos **1 USD = 0,90 €** como tipo de cambio de presupuesto. Las cifras son antes de impuestos. Antes de contratar, comprobaremos el cambio, el importe final con la región elegida y los impuestos de cada factura.

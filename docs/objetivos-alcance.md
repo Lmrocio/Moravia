@@ -17,7 +17,7 @@ Queremos desarrollar una web que facilite la comunicación y el seguimiento de i
 Hemos previsto seis sprints semanales desde el 9 de noviembre hasta la revisión final del **18 de diciembre de 2026**, con 72 horas-persona. Usaremos las metas de la tabla para comprobar cómo funciona el prototipo.
 
 | Objetivo | Plazo previsto | Medición y meta |
-|---|---|---|
+| --- | --- | --- |
 | 1. Lograr que el 100 % de los casos de prueba de alta de finca, generación de token QR y vinculación de viviendas supere las validaciones de seguridad. | 20 de noviembre de 2026 | Completar 100 % de los casos de prueba de alta, caducidad, revocación y validación que definamos. |
 | 2. Completar el ciclo de incidencias y la mensajería privada con una latencia de API inferior a 250 ms en el percentil 95. | 4 de diciembre de 2026 | Completar creación, tres estados y mensajes en ambos sentidos; superar las pruebas de permisos y obtener latencia de API inferior a 250 ms en el percentil 95 de 100 solicitudes de lectura autenticada en entorno de prueba estable, con datos de hasta 40 viviendas y sin arranque en frío. Registrar entorno y resultados. |
 | 3. Conseguir que las consultas admitan como máximo una respuesta por vivienda y rechacen los intentos duplicados. | 11 de diciembre de 2026 | Completar el recorrido de publicación a cierre; rechazar todos los intentos duplicados y accesos entre comunidades en las pruebas definidas. |
@@ -38,7 +38,7 @@ El detalle y prioridades están en [viabilidad técnica](viabilidad-tecnica.md).
 ## Fuera de alcance y ampliaciones
 
 | Función excluida | Motivo y posible evolución |
-|---|---|
+| --- | --- |
 | Contabilidad, recibos y pagos | Añaden complejidad y responsabilidad ajenas al problema operativo inicial; se valorarían en otra fase. |
 | Acuerdos legalmente vinculantes y voto ponderado | Requieren reglas y garantías adicionales; las consultas actuales son informativas. |
 | Asignación a técnicos, reservas de espacios y muro social | Amplían roles y flujos sin ser imprescindibles para seguir incidencias. |

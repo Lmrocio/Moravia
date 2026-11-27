@@ -13,8 +13,8 @@
 Somos Rocío Luque Montes y Pablo Sanz Aznar. Nos repartimos las tareas y revisamos el trabajo de la otra persona. Los dos participamos en las pruebas y en la documentación.
 
 | Integrante | Responsabilidad principal | Apoyo compartido |
-|---|---|---|
-| Rocío Luque Montes | Frontend Lead, UI/UX Designer y QA Manager: React 19, Tailwind 4, diseño móvil, pruebas de interfaz y documentación. | Pruebas de uso, integración, revisión y documentación. |
+| --- | --- | --- |
+| Rocío Luque Montes | Frontend Lead, UI/UX Designer y QA Manager: React, diseño móvil, pruebas de interfaz y documentación. | Pruebas de uso, integración, revisión y documentación. |
 | Pablo Sanz Aznar | Backend Lead, Database Administrator y DevOps: Node 24, Express 5, Mongoose, transacciones, Cloudinary y despliegue. | Pruebas técnicas, integración, revisión y documentación. |
 
 Pablo concentra varias áreas técnicas; Rocío apoyará la integración y el despliegue, y ambos revisarán semanalmente el reparto.
@@ -24,7 +24,7 @@ Pablo concentra varias áreas técnicas; Rocío apoyará la integración y el de
 El proyecto comienza el lunes 9 de noviembre de 2026 y termina con la defensa del viernes 18 de diciembre. Dedicaremos 12 horas-persona por sprint, 72 en total, con 8 horas de reserva incluidas.
 
 | Sprint | Revisión | Resultado previsto | Horas-persona |
-|---|---|---|---:|
+| --- | --- | --- | ---: |
 | 1 | 13 de noviembre | Investigación inicial, diseño y prototipo técnico. | 12 |
 | 2 | 20 de noviembre | Acceso, comunidad, viviendas e invitaciones. | 12 |
 | 3 | 27 de noviembre | Creación y seguimiento de incidencias. | 12 |
@@ -40,10 +40,10 @@ En cada revisión se mostrará el trabajo terminado y se ajustará el siguiente 
 Las versiones son **líneas o versiones de referencia propuestas**, no dependencias instaladas. Al iniciar el desarrollo se comprobará su compatibilidad, se fijarán versiones exactas en `package.json` y el archivo de bloqueo, y se actualizarán parches de seguridad. Node 24 es una [línea LTS](https://nodejs.org/en/about/previous-releases).
 
 | Capa | Herramienta / versión de referencia | Uso y justificación |
-|---|---|---|
+| --- | --- | --- |
 | Entorno | Node.js 24 LTS, npm 11 | JavaScript en servidor y herramientas de construcción. |
-| Interfaz | React 19, Vite 7, React Router 7 | Componentes, desarrollo y rutas de interfaz. |
-| Estilos | Tailwind CSS 4 | Diseño adaptable a móvil con utilidades. |
+| Interfaz | React 19 y Vite 7 | Componentes y entorno de desarrollo del cliente. |
+| Estilos | CSS | Las ramas de interfaz usan estilos propios para adaptar las vistas a móviles. |
 | QR | qrcode.react 4 | Representación del enlace de invitación en pantalla. |
 | API | Express 5, Mongoose 8 | Rutas HTTP y modelos/validación de MongoDB. |
 | Acceso | jsonwebtoken 9, bcrypt 6, cookie-parser 1, express-rate-limit 8 | Sesiones, hash de contraseñas, cookies y limitación de intentos; añadir protección CSRF según la configuración definitiva. |
@@ -61,7 +61,7 @@ Las herramientas de software libre no implican por sí mismas un coste de licenc
 Consulta de condiciones: 6 de noviembre de 2026. Las cuotas pueden cambiar; comprobarlas antes de contratar o desplegar. El objetivo es 0 € durante pruebas dentro de planes gratuitos, sin considerar conexión, equipos, dominio o costes por consumo excedido. Las cuentas y su elegibilidad todavía no están confirmadas.
 
 | Servicio | Uso y coste previsto | Limitaciones y plan de contingencia |
-|---|---|---|
+| --- | --- | --- |
 | [Vercel Hobby](https://vercel.com/docs/plans/hobby) | Frontend; plan gratuito para uso personal no comercial. | 100 GB de transferencia rápida y 100 horas de compilación según sus guías de uso; al superarlos puede tocar esperar hasta el siguiente periodo. Comprobar condiciones para el proyecto y usar demostración local si no encaja. |
 | [Render Free](https://render.com/docs/free) | API; 750 horas gratuitas por espacio de trabajo y mes. | Se suspende tras 15 minutos sin tráfico y puede tardar aproximadamente un minuto en arrancar; disco efímero. El ancho de banda excedido puede facturarse: vigilar consumo y configuración de facturación. |
 | [MongoDB Atlas Free](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/) | Base de datos; un clúster gratuito por proyecto, 0,5 GB. | Recursos y operaciones limitados; puede pausarse tras 30 días sin conexiones. Mantener datos de prueba exportables y revisar copias. |

@@ -1,5 +1,13 @@
 # Análisis de competencia
 
+## Índice
+
+- [Objetivo y método](#objetivo-y-método)
+- [Comparación de productos](#comparación-de-productos)
+- [Empresas, alcance y organización](#empresas-alcance-y-organización)
+- [Alternativa indirecta: Telegram](#alternativa-indirecta-telegram)
+- [Conclusiones y oportunidad](#conclusiones-y-oportunidad)
+
 ## Objetivo y método
 
 Queremos conocer qué alternativas puede utilizar una comunidad de vecinos para comunicarse y seguir incidencias. Hemos consultado información pública de los proveedores el **19 de noviembre de 2026**; no hemos contratado ni probado sus productos. Las fortalezas y limitaciones indican su encaje con nuestro público objetivo, no una valoración independiente de su calidad.
@@ -15,7 +23,7 @@ Incluimos cinco proveedores especializados y Meta, a través de WhatsApp, como c
 ## Comparación de productos
 
 | Producto y empresa | Funciones y puntos fuertes | Precio y condiciones publicadas | Limitaciones para nuestro público | Tecnología conocida |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | **TucomunidApp · IESA/APS** | Incidencias con seguimiento, documentos, reservas, comunicación y acceso vinculado al despacho. | Precio para el administrador o la comunidad: no identificado en las fuentes consultadas. El acceso requiere invitación. | Su FAQ indica que funciona con administradores que utilizan Gesfincas; no cubre directamente nuestra propuesta de autogestión sin despacho. | App móvil y web; integración con el software del administrador. Lenguajes y base de datos: no identificados. [Funciones](https://www.tucomunidad.com/propietarios), [FAQ](https://tucomunidapp.com/faq/), [condiciones](https://tucomunidapp.com/politica-privacidad/). |
 | **PropApp · Plusvecinos** | Incidencias, avisos, mensajes y opciones para comunidades autogestionadas; parte de una necesidad muy similar a la nuestra. | Plan gratis de 0 €/mes; Básico 25 €/mes y Avanzado 45 €/mes por comunidad, sin límite de usuarios e IVA no incluido. La guía describe 60 días iniciales de prueba del plan avanzado. | Reservas y encuestas figuran en planes de pago; para un alcance pequeño conviene comparar solo las funciones necesarias. No podemos afirmar que Moravía sea más sencilla sin probar ambas. | Web y app; tecnologías internas no identificadas. [Precios](https://www.plusvecinos.com/precios-aplicacion/), [planes](https://ayuda.plusvecinos.com/portal/es/kb/articles/mejorar-producto-contratado), [presentación](https://www.plusvecinos.com/quienes-somos/). |
 | **Fynkus · Fynkus Global Solutions** | Gestión de comunidades, contabilidad y herramientas para despachos; dispone de modalidad gratuita y opción profesional. | FREE gratis; PRO mediante suscripción mensual o anual. No hemos encontrado una tarifa numérica verificable para PRO. | Orientado al trabajo de administración de fincas; la modalidad gratuita no incluye algunas automatizaciones ni soporte telefónico. | Servicio web en la nube y app; lenguajes y base de datos no identificados. [FREE y PRO](https://academy.fynkus.com/docs/es/1025174-qu-diferencias-entre-la-versin-free-y-pro), [suscripción](https://academy.fynkus.com/docs/es/1861657-cmo-pagar-la-suscripcin-de-fynkus), [identidad de la empresa](https://www.fynkus.es/wp-content/uploads/2024/10/CONTRATO-SUBENCARGADO-DE-TRATAMIENTO.pdf). |
@@ -23,12 +31,13 @@ Incluimos cinco proveedores especializados y Meta, a través de WhatsApp, como c
 | **Comunidad App · Innovative Minds** | Incidencias, documentación, juntas y reservas para comunidades con o sin administrador; aplicación móvil y panel de gestión. | Para comunidades autogestionadas: 9,99 €/mes hasta 25 viviendas, 14,99 € entre 26 y 50 y 19,99 € para más de 51. App vecinal gratuita y prueba de un mes; confirmar IVA. | La suscripción de la comunidad tiene un coste y la oferta cubre funciones más amplias de las que prevemos para el recorrido inicial. | App móvil para iOS/Android y panel web; base de datos aislada por comunidad según el proveedor. Stack interno no identificado. [Precios y funciones](https://www.comunidadapp.es/precios/), [empresa](https://www.comunidadapp.es/sobre-nosotros/). |
 | **WhatsApp · Meta** | Mensajería y grupos de uso general; permite coordinar conversaciones y comunicados sin implantar una herramienta específica. | La comunicación básica se ofrece gratis; pueden existir costes de conexión y servicios empresariales aparte. | Una conversación no proporciona por sí sola el recorrido de una incidencia con responsables y estados que proponemos. | Aplicación de mensajería con cifrado de extremo a extremo; no hemos determinado su stack completo. [WhatsApp y Meta](https://www.meta.com/actions/building-to-compete/), [grupos](https://about.fb.com/news/2026/01/whatsapp-group-chats-member-tags-text-stickers-event-reminders/). |
 
-Las tarifas son una fotografía de las páginas consultadas, no presupuestos cerrados. Debemos confirmar impuestos, permanencia, altas y módulos incluidos antes de comparar un coste final. En particular, no hemos usado las tarifas de `fincasplus.es` para FincasPlus Élite.
+> [!NOTE]
+> Las tarifas corresponden al momento de la consulta. Antes de comparar presupuestos, conviene confirmar impuestos, permanencia, altas y módulos. Las tarifas de `fincasplus.es` corresponden a otro producto.
 
 ## Empresas, alcance y organización
 
 | Empresa / producto | Tamaño y plantilla | Modelo y público | Alcance y organización |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **IESA/APS · TucomunidApp** | Una ficha atribuye 101 empleados a Aareon Proptech Spain sin precisar el año. No clasificamos su tamaño porque no hemos contrastado sus cuentas ni las empresas vinculadas. | Orientación B2B hacia despachos de administradores, con acceso para residentes invitados; inferencia a partir de la integración y condiciones de acceso. | Presencia en España documentada en su FAQ; alcance comercial completo y estructura interna: por confirmar. Véase la identificación societaria y sus límites más abajo. |
 | **Plusvecinos · PropApp** | Su historia habla de una startup en 2014. No clasificamos su tamaño actual porque los documentos legales identifican sociedades distintas y no hemos encontrado una plantilla verificable del servicio. | Freemium y suscripción por comunidad; dirigido a comunidades, propietarios y también a su relación con administradores y proveedores. | Empresa con domicilio en España; estructura interna y alcance comercial completo: por confirmar. Sus documentos legales identifican sociedades distintas, como explicamos más abajo. |
 | **Fynkus Global Solutions · Fynkus** | Una ficha indica 8 empleados en 2024 y otra ofrece un intervalo diferente sin precisar el año. No clasificamos su tamaño porque no hemos podido aclarar la discrepancia ni contrastar las cuentas y los vínculos empresariales. | B2B y freemium: versión gratis y suscripción PRO para la gestión profesional de fincas. | Actividad dirigida a administradores de fincas en España; organización interna y otros mercados: por confirmar. |
