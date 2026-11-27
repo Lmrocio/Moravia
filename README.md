@@ -47,6 +47,7 @@ Las versiones de referencia, los límites de los servicios y las decisiones téc
 | [Viabilidad técnica](docs/viabilidad-tecnica.md) | 2b | Requisitos priorizados, arquitectura, modelo de datos, capacidades y riesgos. |
 | [Objetivos y alcance](docs/objetivos-alcance.md) | 2d | Objetivos SMART, MVP, exclusiones y criterios de éxito. |
 | [Recursos y organización](docs/recursos.md) | 2e | Responsabilidades, calendario, herramientas y servicios. |
+| [Financiación y capital de trabajo](docs/financiacion.md) | 2g | Costes de producción, caja para seis meses y opciones de financiación. |
 | [Seguimiento semanal](docs/seguimiento/README.md) | Seguimiento | Plantilla del profesor y revisiones de la semana previa y los seis sprints. |
 
 ## Equipo y planificación
